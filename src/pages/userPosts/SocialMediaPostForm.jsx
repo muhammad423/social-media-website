@@ -5,9 +5,10 @@ import axios from "axios";
 import { getUserPosts } from "../../redux/AuthSlice";
 
 const SocialMediaPostForm = () => {
+  const token = useSelector((state) => state.auth.accessToken);
+  const {userPosts} = useSelector((state) => state.auth)
   const dispatch = useDispatch();
   const { handleSubmit, register, setValue, getValues } = useForm();
-  const token = useSelector((state) => state.auth.accessToken);
 
   const onSubmit = async (data) => {
     try {
@@ -70,6 +71,8 @@ const SocialMediaPostForm = () => {
           Add Photos/Videos
         </label>
       </div>
+     <div>
+     </div>
       <div className="p-4">
         <div className="flex space-x-4">
           <input

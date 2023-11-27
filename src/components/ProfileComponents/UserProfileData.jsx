@@ -1,7 +1,8 @@
 import React from 'react'
+import UserPostsPage from '../postComponents/UserPostsPage'
 
 
-const UserProfileData = ({serachProfileData, isFollowing}) => {
+const UserProfileData = ({serachProfileData, isFollowing, myPosts}) => {
     console.log('data2', serachProfileData)
   return (
     <div>
@@ -9,7 +10,7 @@ const UserProfileData = ({serachProfileData, isFollowing}) => {
         <div className="px-3 py-2">
           <div className="flex flex-col gap-1 text-center">
             <img
-              src={serachProfileData?.data?.account?.avatar?.url}
+              src={serachProfileData?.account?.avatar?.url}
               className="block mx-auto bg-center bg-no-repeat bg-cover w-20 h-20 rounded-full border border-gray-400 shadow-lg"
             />
             <p className=" font-medium font-fontNunito text-lg text-white capitalize">
@@ -97,34 +98,7 @@ const UserProfileData = ({serachProfileData, isFollowing}) => {
           </div>
 
           <div className="grid grid-cols-3 gap-2 my-3">
-            <img
-              src="https://images.pexels.com/photos/458766/pexels-photo-458766.jpeg"
-              className="block bg-center bg-no-repeat bg-cover h-40 w-full rounded-lg"
-            />
-            <img
-              src="https://images.pexels.com/photos/458766/pexels-photo-458766.jpeg"
-              className="block bg-center bg-no-repeat bg-cover h-40 w-full rounded-lg"
-            />
-            <img
-              src="https://images.pexels.com/photos/458766/pexels-photo-458766.jpeg"
-              className="block bg-center bg-no-repeat bg-cover h-40 w-full rounded-lg"
-            />
-            <img
-              src="https://images.pexels.com/photos/458766/pexels-photo-458766.jpeg"
-              className="block bg-center bg-no-repeat bg-cover h-40 w-full rounded-lg"
-            />
-            <img
-              src="https://images.pexels.com/photos/458766/pexels-photo-458766.jpeg"
-              className="block bg-center bg-no-repeat bg-cover h-40 w-full rounded-lg"
-            />
-            <img
-              src="https://images.pexels.com/photos/458766/pexels-photo-458766.jpeg"
-              className="block bg-center bg-no-repeat bg-cover h-40 w-full rounded-lg"
-            />
-            <img
-              src="https://images.pexels.com/photos/458766/pexels-photo-458766.jpeg"
-              className="block bg-center bg-no-repeat bg-cover h-40 w-full rounded-lg"
-            />
+           <UserPostsPage  myPosts={myPosts}/>
           </div>
         </div>
 

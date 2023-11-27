@@ -39,7 +39,6 @@ export default function SearchUserProfile() {
           dispatch(getSearchUserProfileData(response?.data))
         }
       } catch (error) {
-        console.log("username erroe", error);
       }
     };
     getUserName();

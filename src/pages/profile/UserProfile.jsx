@@ -5,6 +5,8 @@ import { getUserProfileData } from "../../redux/AuthSlice";
 import { Link, useParams } from "react-router-dom";
 import FullProfileImageModel from "../../components/ProfileComponents/FullProfileImageModel";
 import { UserPostsPage, UserProfileData } from "../../components";
+import axios from "axios";
+
 
 const UserProfile = () => {
   const _id = useParams();
@@ -15,6 +17,8 @@ const UserProfile = () => {
   console.log(userProfileData);
   const [loadingUserProfile, setLoadingUserProfile] = useState(true);
   const [isFollowing, setISFollowing] = useState(false);
+  const [myPosts, setMyposts] = useState(null)
+  console.log(myPosts, 'my')
   const [open, setOpen] = useState(false);
 
   console.log(isFollowing, "isfolowing");
@@ -31,6 +35,7 @@ const UserProfile = () => {
         const data = await userProfile(tokn);
         dispatch(getUserProfileData(data));
         setUserProfileData(data);
+        console.log('user data id profile', data)
       } catch (error) {
         console.log("sorry", error);
       } finally {
@@ -41,6 +46,28 @@ const UserProfile = () => {
     fetchUserProfileData();
   }, []);
 
+  
+  useEffect(() => {
+    const getMyPosts = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/v1/social-media/posts/get/my?page=1&limit=10`, {
+          headers: {
+            Authorization: `Bearer ${tokn}`
+          }
+        })
+        
+        if(response.data){
+          setMyposts(response?.data?.data )
+        }
+        
+        console.log(response?.data,'myposts')
+      } catch (error) {
+        console.log('username erroe', error)
+      }
+    }
+    getMyPosts()
+  }, [])
+
   return (
     <>
       {serachProfileData && serachProfileData?.data?.owner ? (
@@ -48,10 +75,11 @@ const UserProfile = () => {
           <UserProfileData
             serachProfileData={serachProfileData}
             isFollowing={isFollowing}
+            myPosts={myPosts}
           />
         </div>
       ) : (
-        <div className="max-w-4xl mx-auto">
+        <div className="w-full mx-auto px-10">
           <div className="px-3 py-2">
             <div className="flex flex-col gap-1 text-center">
               <img
@@ -158,10 +186,8 @@ const UserProfile = () => {
               </button>
             </div>
 
-            <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-2 my-3">
-              <UserPostsPage />
-              <UserPostsPage />
-              <UserPostsPage />
+            <div className="grid lg:grid-cols-3 md:grid-cols-2  gap-2 my-3">
+              <UserPostsPage  myPosts={myPosts}/>          
 
             </div>
           </div>

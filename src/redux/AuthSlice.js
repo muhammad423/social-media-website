@@ -7,6 +7,10 @@ const getAccessTokenFromLocalStorage = () => {
 const getRefreshTokenFromLocalStorage = () => {
   return localStorage.getItem("refreshToken") || null;
 };
+const getUserPostsFromLocalStorage = () => {
+  const userPosts = localStorage.getItem("userPosts");
+  return userPosts ? JSON.parse(userPosts) : [];
+};
 
 const initialState = {
   accessToken: getAccessTokenFromLocalStorage(),
@@ -14,7 +18,7 @@ const initialState = {
   userProfileData: JSON.parse(localStorage.getItem('userProfileData')) || [],
   refreshToken: getRefreshTokenFromLocalStorage(),
   searchUserProfileData: [],
-  userPosts: JSON.parse(localStorage.getItem("userPosts")) || [],
+  userPosts: getUserPostsFromLocalStorage()
 };
 
 export const authSlice = createSlice({
@@ -47,8 +51,8 @@ export const authSlice = createSlice({
       state.searchUserProfileData = action.payload;
     },
     getUserPosts: (state, action) => {
-      state.userPosts = action.payload;
-      localStorage.setItem("userPosts", JSON.stringify(action.payload));
+      state.userPosts =[...state.userPosts ,action.payload]
+      localStorage.setItem("userPosts", JSON.stringify(state.userPosts));
     },
   },
 });

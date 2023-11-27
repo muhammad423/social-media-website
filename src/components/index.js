@@ -5,6 +5,7 @@ import Dashboard from "./dashboard/Dashboard";
 import UserProfileData from "./ProfileComponents/UserProfileData";
 import UserPostsPage from "./postComponents/UserPostsPage";
 import AddPostButton from "./ProfileComponents/AddPostButton";
+import AllPosts from "./postComponents/AllPosts";
 
 
 export {
@@ -14,5 +15,6 @@ export {
     Dashboard, 
     UserProfileData,
     UserPostsPage,
-    AddPostButton
+    AddPostButton,
+    AllPosts
 }

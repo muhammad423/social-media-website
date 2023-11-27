@@ -23,6 +23,7 @@ import axios from "axios";
 import SearchUserProfile from "../ProfileComponents/SearchUserProfile";
 import UserPostsPage from "../postComponents/UserPostsPage";
 import AddPostButton from "../ProfileComponents/AddPostButton";
+import AllPosts from "../postComponents/AllPosts";
 
 
 const navigation = [
@@ -44,11 +45,12 @@ function classNames(...classes) {
 
 export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const userProfileDataId = useSelector((state) => state.auth.userProfileData);
+  const userProfileDataId = useSelector((state) => state.auth.userInformation);
   const dispatch = useDispatch();
   const tokn = useSelector((state) => state.auth.accessToken);
-  const [userName, setUserName] = useState('')
-  console.log(userName, 'userName')
+  const [allPosts, setAllPosts] = useState(null)
+  console.log('all posts',allPosts)
+
 
   const handleLogout = async () => {
     try {
@@ -59,23 +61,26 @@ export default function Dashboard() {
     }
   };
 
-  // useEffect(() => {
-  //   const getUserName = async () => {
-  //     try {
-  //       const response = await axios.get(`http://localhost:8080/api/v1/social-media/profile/u/${userName}`, {
-  //         headers: {
-  //           Authorization: `Bearer ${tokn}`
-  //         }
-  //       })
-
-  //       const data = response.data;
-  //       console.log('username date', response.data)
-  //     } catch (error) {
-  //       console.log('username erroe', error)
-  //     }
-  //   }
-  //   getUserName()
-  // }, [userName, setUserName])
+  useEffect(() => {
+    const getAllPosts = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/v1/social-media/posts?page=1&limit=40`, {
+          headers: {
+            Authorization: `Bearer ${tokn}`
+          }
+        })
+        
+        if(response.data?.data){
+          setAllPosts(response.data?.data?.posts  )
+        }
+         console.log(response?.data, 'alll allla posts')
+        
+      } catch (error) {
+        console.log('username erroe', error)
+      }
+    }
+    getAllPosts()
+  }, [])
 
   return (
     <>
@@ -268,7 +273,7 @@ export default function Dashboard() {
                       <>
                          <img
                       className="h-8 w-8 rounded-full bg-gray-50"
-                      src={userProfileDataId?.data?.account?.avatar?.url}
+                      src={userProfileDataId?.avatar?.url}
                       alt=""
                     />
                     <span className="hidden lg:flex lg:items-center">
@@ -306,7 +311,7 @@ export default function Dashboard() {
                       {tokn && (<Menu.Item>
 
                         <Link
-                          to={`/userProfile/${userProfileDataId?.data?.owner}`}
+                          to={`/userProfile/${userProfileDataId._id}`}
                           className="block px-3 py-1 text-sm leading-6 text-gray-900"
                         >
                           User Profile
@@ -339,8 +344,10 @@ export default function Dashboard() {
 
           <main className="xl:pl-96 md:pr-80">
             <div className="px-4 py-10 sm:px-6 lg:px-8 lg:py-6">
-             <AddPostButton />
-              <UserPostsPage />
+              <AddPostButton />
+             <AllPosts
+               allPosts={allPosts}
+             />
             </div>
           </main>
         </div>
