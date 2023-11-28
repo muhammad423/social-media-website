@@ -75,3 +75,21 @@ export const userProfile = async (token) => {
     console.log(error, "error");
   }
 };
+
+
+export const userProfileByName = async (query, token) => {
+  try {
+    console.log("token", token)
+    const response = await axios.get(
+      `http://localhost:8080/api/v1/social-media/profile/u/${query}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response?.data;
+  } catch (error) {
+    console.log(error, "error");
+  }
+};

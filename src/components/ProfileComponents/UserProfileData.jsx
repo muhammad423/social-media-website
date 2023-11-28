@@ -1,16 +1,40 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import UserPostsPage from '../postComponents/UserPostsPage'
+import axios from 'axios'
 
 
-const UserProfileData = ({serachProfileData, isFollowing, myPosts}) => {
+
+const UserProfileData = ({serachProfileData, isFollowing, tokn}) => {
+  const [oneUserPosts, setOneUserPosts] = useState()
     console.log('data2', serachProfileData)
+    useEffect(() => {
+      const getPostsByUserName = async () => {
+        try {
+          const response = await axios.get(
+            `http://localhost:8080/api/v1/social-media/posts/get/u/${serachProfileData?.data?.account?.username}?page=1&limit=10`,
+            {
+              headers: {
+                Authorization: `Bearer ${tokn}`,
+              },
+            }
+          );
+          if(response?.data){
+            setOneUserPosts(response?.data)
+          }
+          console.log(response?.data, "user posts  By name");
+        } catch (error) {
+          console.log("username errorrr", error);
+        }
+      };
+      getPostsByUserName();
+    }, []);
   return (
     <div>
-        <div className="max-w-2xl mx-auto">
+        <div className="w-full px-10 mx-auto">
         <div className="px-3 py-2">
           <div className="flex flex-col gap-1 text-center">
             <img
-              src={serachProfileData?.account?.avatar?.url}
+              src={serachProfileData?.data?.account?.avatar?.url}
               className="block mx-auto bg-center bg-no-repeat bg-cover w-20 h-20 rounded-full border border-gray-400 shadow-lg"
             />
             <p className=" font-medium font-fontNunito text-lg text-white capitalize">
@@ -98,7 +122,7 @@ const UserProfileData = ({serachProfileData, isFollowing, myPosts}) => {
           </div>
 
           <div className="grid grid-cols-3 gap-2 my-3">
-           <UserPostsPage  myPosts={myPosts}/>
+           <UserPostsPage  oneUserPosts={oneUserPosts}/>
           </div>
         </div>
 

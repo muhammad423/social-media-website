@@ -17,7 +17,7 @@ const initialState = {
   userInformation: JSON.parse(localStorage.getItem("userInformation")) || null,
   userProfileData: JSON.parse(localStorage.getItem('userProfileData')) || [],
   refreshToken: getRefreshTokenFromLocalStorage(),
-  searchUserProfileData: [],
+  searchUserProfileData: JSON.parse(localStorage.getItem('userSearchData')) || null,
   userPosts: getUserPostsFromLocalStorage()
 };
 
@@ -49,6 +49,7 @@ export const authSlice = createSlice({
     },
     getSearchUserProfileData: (state, action) => {
       state.searchUserProfileData = action.payload;
+      localStorage.setItem("userSearchData", JSON.stringify(action.payload));
     },
     getUserPosts: (state, action) => {
       state.userPosts =[...state.userPosts ,action.payload]

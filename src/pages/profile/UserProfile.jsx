@@ -7,23 +7,19 @@ import FullProfileImageModel from "../../components/ProfileComponents/FullProfil
 import { UserPostsPage, UserProfileData } from "../../components";
 import axios from "axios";
 
-
 const UserProfile = () => {
   const _id = useParams();
-  console.log(_id, "_id");
   const dispatch = useDispatch();
   const [userProfileData, setUserProfileData] = useState(null);
   console.log(userProfileData, "abcdefdg");
   console.log(userProfileData);
   const [loadingUserProfile, setLoadingUserProfile] = useState(true);
-  const [isFollowing, setISFollowing] = useState(false);
-  const [myPosts, setMyposts] = useState(null)
-  console.log(myPosts, 'my')
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [myPosts, setMyposts] = useState(null);
   const [open, setOpen] = useState(false);
 
-  console.log(isFollowing, "isfolowing");
   const tokn = useSelector((state) => state.auth.accessToken);
-  
+
   const serachProfileData = useSelector(
     (state) => state.auth.searchUserProfileData
   );
@@ -35,7 +31,7 @@ const UserProfile = () => {
         const data = await userProfile(tokn);
         dispatch(getUserProfileData(data));
         setUserProfileData(data);
-        console.log('user data id profile', data)
+        console.log("user data id profile", data);
       } catch (error) {
         console.log("sorry", error);
       } finally {
@@ -46,27 +42,29 @@ const UserProfile = () => {
     fetchUserProfileData();
   }, []);
 
-  
   useEffect(() => {
     const getMyPosts = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/v1/social-media/posts/get/my?page=1&limit=10`, {
-          headers: {
-            Authorization: `Bearer ${tokn}`
+        const response = await axios.get(
+          `http://localhost:8080/api/v1/social-media/posts/get/my?page=1&limit=10`,
+          {
+            headers: {
+              Authorization: `Bearer ${tokn}`,
+            },
           }
-        })
-        
-        if(response.data){
-          setMyposts(response?.data?.data )
+        );
+
+        if (response.data) {
+          setMyposts(response?.data?.data);
         }
-        
-        console.log(response?.data,'myposts')
+
+        console.log(response?.data, "myposts");
       } catch (error) {
-        console.log('username erroe', error)
+        console.log("username erroe", error);
       }
-    }
-    getMyPosts()
-  }, [])
+    };
+    getMyPosts();
+  }, []);
 
   return (
     <>
@@ -75,7 +73,7 @@ const UserProfile = () => {
           <UserProfileData
             serachProfileData={serachProfileData}
             isFollowing={isFollowing}
-            myPosts={myPosts}
+            tokn={tokn}
           />
         </div>
       ) : (
@@ -187,8 +185,7 @@ const UserProfile = () => {
             </div>
 
             <div className="grid lg:grid-cols-3 md:grid-cols-2  gap-2 my-3">
-              <UserPostsPage  myPosts={myPosts}/>          
-
+              <UserPostsPage myPosts={myPosts} tokn={tokn} />
             </div>
           </div>
 

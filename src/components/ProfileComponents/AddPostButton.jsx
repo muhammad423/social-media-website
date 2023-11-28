@@ -1,7 +1,7 @@
-// AddPostButton.js
-import React, { useState } from 'react';
-import { RiAddLine } from 'react-icons/ri';
-import { Link } from 'react-router-dom';
+
+import React, { useState } from "react";
+import { RiAddLine } from "react-icons/ri";
+import { Link } from "react-router-dom";
 
 const AddPostButton = () => {
   const [isListOpen, setListOpen] = useState(false);
@@ -11,7 +11,7 @@ const AddPostButton = () => {
   };
 
   return (
-    <div className="relative inline-block text-left">
+    <div className="relative inline-block text-left my-3">
       <div>
         <button
           type="button"
@@ -32,21 +32,21 @@ const AddPostButton = () => {
             aria-labelledby="options-menu"
           >
             <Link
-              to='/postForm'
+              to="/postForm"
               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
               role="menuitem"
             >
-             Upload Post
+              Upload Post
             </Link>
             <Link
-              to='#'
+              to="#"
               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
               role="menuitem"
             >
               Option 2
             </Link>
             <Link
-              to='#'
+              to="#"
               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
               role="menuitem"
             >

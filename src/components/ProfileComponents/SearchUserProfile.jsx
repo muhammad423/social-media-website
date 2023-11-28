@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { getSearchUserProfileData } from "../../redux/AuthSlice";
+import { userProfileByName } from "../../auth/auth";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -23,26 +24,37 @@ export default function SearchUserProfile() {
 
  
 
+  // useEffect(() => {
+  //   const getUserName = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `http://localhost:8080/api/v1/social-media/profile/u/${query}`,
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${tokn}`,
+  //           },
+  //         }
+  //       );
+  //       if (response?.data) {
+  //         setUserProfile(response?.data);
+  //         dispatch(getSearchUserProfileData(response?.data))
+  //       }
+  //     } catch (error) {
+  //     }
+  //   };
+  //   getUserName();
+  // }, [query, setQuery]);
+
   useEffect(() => {
-    const getUserName = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:8080/api/v1/social-media/profile/u/${query}`,
-          {
-            headers: {
-              Authorization: `Bearer ${tokn}`,
-            },
-          }
-        );
-        if (response?.data) {
-          setUserProfile(response?.data);
-          dispatch(getSearchUserProfileData(response?.data))
-        }
-      } catch (error) {
-      }
-    };
-    getUserName();
-  }, [query, setQuery]);
+  const profileByName = async() => {
+    const data = await userProfileByName(query, tokn)
+    if(data){
+      setUserProfile(data)
+      dispatch(getSearchUserProfileData(data))
+    }
+  }
+  profileByName()
+  }, [query, setUserProfile])
 
   const filteredPeople =
     query === ""
@@ -50,8 +62,6 @@ export default function SearchUserProfile() {
       : Object.values(userProfile && userProfile).filter((person) =>
           person?.account?.username?.toLowerCase().includes(query.toLowerCase())
         );
-
-  console.log("filtered people", filteredPeople);
 
   return (
     <Combobox as="div" value={selectedPerson} onChange={setSelectedPerson}>

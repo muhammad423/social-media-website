@@ -80,8 +80,9 @@ export default function Dashboard() {
       }
     }
     getAllPosts()
-  }, [])
+  }, [allPosts, setAllPosts])
 
+ 
   return (
     <>
       <div>
@@ -236,15 +237,6 @@ export default function Dashboard() {
                   Search
                 </label>
                 
-                {/* <input
-                  id="search-field"
-                  className="block h-full w-full border-0 py-0 pl-8 pr-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm"
-                  placeholder="Search..."
-                  onChange={(e) => setUserName(e.target.value)}
-                  type="search"
-                  name="search"
-                /> */}
-
                <div className="block xl:hidden">
                <SearchUserProfile />
                </div>
@@ -281,7 +273,7 @@ export default function Dashboard() {
                         className="ml-4 text-sm font-semibold leading-6 text-gray-900"
                         aria-hidden="true"
                       >
-                        {userProfileDataId?.data?.account?.username}
+                        {userProfileDataId?.username}
                       </span>
                       <ChevronDownIcon
                         className="ml-2 h-5 w-5 text-gray-400"
@@ -347,6 +339,7 @@ export default function Dashboard() {
               <AddPostButton />
              <AllPosts
                allPosts={allPosts}
+               tokn={tokn}
              />
             </div>
           </main>
