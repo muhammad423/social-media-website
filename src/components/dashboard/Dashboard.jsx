@@ -80,7 +80,7 @@ export default function Dashboard() {
       }
     }
     getAllPosts()
-  }, [allPosts, setAllPosts])
+  }, [])
 
  
   return (

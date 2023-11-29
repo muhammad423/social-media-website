@@ -2,13 +2,16 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { userProfile } from "../../auth/auth";
 import { getUserProfileData } from "../../redux/AuthSlice";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import FullProfileImageModel from "../../components/ProfileComponents/FullProfileImageModel";
 import { UserPostsPage, UserProfileData } from "../../components";
 import axios from "axios";
+import UpdateSocialMediaPostForm from "../../components/postComponents/UpdateSocialMediaPostForm";
+import UpdatePostModel from "../../components/modelsComponents/UpdatePostModel";
 
 const UserProfile = () => {
   const _id = useParams();
+  const navigate = useNavigate()
   const dispatch = useDispatch();
   const [userProfileData, setUserProfileData] = useState(null);
   console.log(userProfileData, "abcdefdg");
@@ -17,6 +20,7 @@ const UserProfile = () => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [myPosts, setMyposts] = useState(null);
   const [open, setOpen] = useState(false);
+  const [openUpdateModel, setOpenUpdateModel] = useState(false);
 
   const tokn = useSelector((state) => state.auth.accessToken);
 
@@ -185,12 +189,12 @@ const UserProfile = () => {
             </div>
 
             <div className="grid lg:grid-cols-3 md:grid-cols-2  gap-2 my-3">
-              <UserPostsPage myPosts={myPosts} tokn={tokn} />
+              <UserPostsPage myPosts={myPosts} tokn={tokn} setMyposts={setMyposts} setOpenUpdateModel={setOpenUpdateModel}/>
             </div>
           </div>
 
           <div className="flex justify-between items-center bg-yellow-600 bg-opacity-20 px-10 py-5 rounded-full text-gray-500">
-            <button className="p-2 rounded-full bg-white">
+            <button className="p-2 rounded-full bg-white" onClick={() => navigate('/')}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-8 w-8 text-pink-500"
@@ -216,7 +220,7 @@ const UserProfile = () => {
                 />
               </svg>
             </button>
-            <button className="p-2 rounded-full bg-pink-500">
+            <button className="p-2 rounded-full bg-pink-500" onClick={() => navigate('/postForm')}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="text-white h-8 w-8"
@@ -266,6 +270,7 @@ const UserProfile = () => {
             </button>
           </div>
           <FullProfileImageModel open={open} setOpen={setOpen} />
+          <UpdatePostModel openUpdateModel={openUpdateModel} setOpenUpdateModel={setOpenUpdateModel} myPosts={myPosts} tokn={tokn} setMyposts={setMyposts}/>
         </div>
       )}
     </>

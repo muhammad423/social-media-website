@@ -3,12 +3,12 @@ import { useForm } from "react-hook-form";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { getUserPosts } from "../../redux/AuthSlice";
 
-const SocialMediaPostForm = () => {
-  const navigate = useNavigate()
+
+const UpdateSocialMediaPostForm = ({ myPosts, tokn, setMyposts }) => {
+  console.log(myPosts, 'mymymy')
+  const navigate = useNavigate();
   const token = useSelector((state) => state.auth.accessToken);
-  const {userPosts} = useSelector((state) => state.auth)
   const dispatch = useDispatch();
   const { handleSubmit, register, setValue, getValues } = useForm();
 
@@ -27,32 +27,35 @@ const SocialMediaPostForm = () => {
         formData.append(`tags[${ind}]`, tag);
       });
 
-      console.log("FormData:", formData);
-      const response = await axios.post(
-        "http://localhost:8080/api/v1/social-media/posts",
+      const handleUpdatePost = (postId) => {
+        const updateFilterData = myPosts?.posts.filter((post) => post._id  === postId)
+        setMyposts(updateFilterData)
+      }
+     const mapData = myPosts?.posts.map((post) => post?._id)
+     console.log(mapData, 'mapdata, id')
+      const response = await axios.patch(
+        `http://localhost:8080/api/v1/social-media/posts/${mapData}`,
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${tokn}`,
           },
         }
       );
-      if (response?.status == 200) {
-        dispatch(getUserPosts(response?.data));
-      }
-      if(response?.data){
-        navigate(`/userProfile/${response?.data?.data?.author?.owner}`)
+
+      if (response?.status === 200) {
+        handleUpdatePost(mapData)
       }
 
-      console.log("Post created successfully:", response.data , response?.data?.data?.author?.owner);
+      console.log("Post updated successfully:", response.data);
     } catch (error) {
-      console.error("Error creating post:", error);
+      console.error("Error updating post:", error);
     }
   };
 
   return (
-    <div className="max-w-2xl mx-auto mt-8 bg-white rounded-md shadow-md">
+    <div className="max-w-2xl mx-auto mt-8 bg-white rounded-lg shadow-md">
       <div className="p-4 border-b">
         <textarea
           {...register("content")}
@@ -73,11 +76,9 @@ const SocialMediaPostForm = () => {
           htmlFor="fileInput"
           className="cursor-pointer text-blue-500 hover:text-blue-700"
         >
-          Add Photos/Videos
+          📷 Add Photos/Videos
         </label>
       </div>
-     <div>
-     </div>
       <div className="p-4">
         <div className="flex space-x-4">
           <input
@@ -104,11 +105,11 @@ const SocialMediaPostForm = () => {
           onClick={handleSubmit(onSubmit)}
           className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:shadow-outline-blue active:bg-blue-800"
         >
-          Post
+          Update Post
         </button>
       </div>
     </div>
   );
 };
 
-export default SocialMediaPostForm;
+export default UpdateSocialMediaPostForm;

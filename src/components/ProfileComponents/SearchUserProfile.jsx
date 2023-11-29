@@ -22,29 +22,6 @@ export default function SearchUserProfile() {
   const [userProfile, setUserProfile] = useState("");
   console.log("userProfile", userProfile);
 
- 
-
-  // useEffect(() => {
-  //   const getUserName = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         `http://localhost:8080/api/v1/social-media/profile/u/${query}`,
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${tokn}`,
-  //           },
-  //         }
-  //       );
-  //       if (response?.data) {
-  //         setUserProfile(response?.data);
-  //         dispatch(getSearchUserProfileData(response?.data))
-  //       }
-  //     } catch (error) {
-  //     }
-  //   };
-  //   getUserName();
-  // }, [query, setQuery]);
-
   useEffect(() => {
   const profileByName = async() => {
     const data = await userProfileByName(query, tokn)
@@ -84,7 +61,7 @@ export default function SearchUserProfile() {
           <Combobox.Options className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
             {filteredPeople.map((person) => (
               <Combobox.Option
-                // key={person?.owner}
+                key={person?.owner}
                 value={person}
                 className={({ active }) =>
                   classNames(

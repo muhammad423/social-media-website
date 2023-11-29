@@ -11,6 +11,7 @@ import SocialMediaPostForm from "./userPosts/SocialMediaPostForm";
 import UserPost from "./userPosts/UserPost";
 
 
+
 export{
     SignUp,
     SignIn,
@@ -22,5 +23,5 @@ export{
     UpdateProfiledata,
     UpdateProfileImage,
     SocialMediaPostForm,
-    UserPost
+    UserPost,
 }

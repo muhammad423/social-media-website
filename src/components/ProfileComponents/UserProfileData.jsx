@@ -126,7 +126,7 @@ const UserProfileData = ({serachProfileData, isFollowing, tokn}) => {
           </div>
         </div>
 
-        <div className="flex justify-between items-center bg-yellow-600 bg-opacity-20 px-10 py-5 rounded-full text-gray-500">
+        {/* <div className="flex justify-between items-center bg-yellow-600 bg-opacity-20 px-10 py-5 rounded-full text-gray-500">
           <button className="p-2 rounded-full bg-white">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -201,7 +201,7 @@ const UserProfileData = ({serachProfileData, isFollowing, tokn}) => {
               />
             </svg>
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   )

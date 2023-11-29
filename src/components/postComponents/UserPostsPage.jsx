@@ -1,16 +1,16 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FaThumbsUp,
   FaComment,
   FaBookmark,
   FaEdit,
   FaTrash,
-} from "react-icons/fa"; // You can use other icons as needed
+} from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-const UserPostsPage = ({ oneUserPosts, myPosts, tokn }) => {
+const UserPostsPage = ({ oneUserPosts, myPosts, tokn, setMyposts, setOpenUpdateModel }) => {
 
   const navigate = useNavigate();
   const [isLiked, setLiked] = useState(false);
@@ -26,14 +26,23 @@ const UserPostsPage = ({ oneUserPosts, myPosts, tokn }) => {
     setBookmarked(!isBookmarked);
   };
 
-  const handleDeletePost = async(postId) => {
-     const response = await axios.delete(`http://localhost:8080/api/v1/social-media/posts/${postId}`, {
+  const handleUpdatePosts = (postId) => {
+    let updatedPosts = myPosts?.posts.filter((post) => post._id != postId)
+    setMyposts(updatedPosts)
+  }
+
+  const handleDeletePost = async (postId) => {
+    const response = await axios.delete(`http://localhost:8080/api/v1/social-media/posts/${postId}`, {
       headers: {
         Authorization: `Bearer ${tokn}`
       }
-     })
-     console.log(response?.data)
+    })
+    if (response.status == 200) {
+      handleUpdatePosts(postId)
+    }
+
   }
+
 
   return (
     <>
@@ -45,7 +54,7 @@ const UserPostsPage = ({ oneUserPosts, myPosts, tokn }) => {
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center">
                     <img
-                      src={post.author?.account?.avatar?.url} 
+                      src={post.author?.account?.avatar?.url}
                       alt={post?.author?.account?._id}
                       className="w-10 h-10 rounded-full mr-2"
                     />
@@ -89,7 +98,7 @@ const UserPostsPage = ({ oneUserPosts, myPosts, tokn }) => {
                         key={index}
                         src={image?.url}
                         alt={`Post Image ${index + 1}`}
-                        className="w-full h-[500px] rounded-md mb-2 object-cover"
+                        className="w-full h-[300px] rounded-md mb-2 object-cover"
                       />
                     ))}
                   </div>
@@ -99,9 +108,8 @@ const UserPostsPage = ({ oneUserPosts, myPosts, tokn }) => {
                   <div className="flex items-center space-x-4">
                     <button
                       onClick={handleLike}
-                      className={`flex items-center space-x-1 ${
-                        isLiked ? "text-blue-500" : "text-gray-500"
-                      }`}
+                      className={`flex items-center space-x-1 ${isLiked ? "text-blue-500" : "text-gray-500"
+                        }`}
                     >
                       <FaThumbsUp />
                       <span>{post?.likes} Likes</span>
@@ -129,7 +137,7 @@ const UserPostsPage = ({ oneUserPosts, myPosts, tokn }) => {
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center">
                     <img
-                      src={post.author?.account?.avatar?.url} 
+                      src={post.author?.account?.avatar?.url}
                       alt={post?.author?.account?._id}
                       className="w-10 h-10 rounded-full mr-2"
                     />
@@ -143,7 +151,7 @@ const UserPostsPage = ({ oneUserPosts, myPosts, tokn }) => {
                   <div>
                     <div>
                       <div className="flex space-x-2">
-                        <button className="text-gray-500">
+                        <button className="text-gray-500" onClick={() => setOpenUpdateModel(true)}>
                           <FaEdit />
                         </button>
                         <button className="text-red-500" onClick={() => handleDeletePost(post?._id)}>
@@ -173,7 +181,7 @@ const UserPostsPage = ({ oneUserPosts, myPosts, tokn }) => {
                         key={index}
                         src={image?.url}
                         alt={`Post Image ${index + 1}`}
-                        className="w-full h-[500px] rounded-md mb-2 object-cover"
+                        className="w-full h-[300px] rounded-md mb-2 object-cover"
                       />
                     ))}
                   </div>
@@ -183,9 +191,8 @@ const UserPostsPage = ({ oneUserPosts, myPosts, tokn }) => {
                   <div className="flex items-center space-x-4">
                     <button
                       onClick={handleLike}
-                      className={`flex items-center space-x-1 ${
-                        isLiked ? "text-blue-500" : "text-gray-500"
-                      }`}
+                      className={`flex items-center space-x-1 ${isLiked ? "text-blue-500" : "text-gray-500"
+                        }`}
                     >
                       <FaThumbsUp />
                       <span>{post?.likes} Likes</span>
@@ -211,3 +218,7 @@ const UserPostsPage = ({ oneUserPosts, myPosts, tokn }) => {
 };
 
 export default UserPostsPage;
+
+
+
+
