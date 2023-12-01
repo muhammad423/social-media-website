@@ -3,24 +3,21 @@ import { useSelector, useDispatch } from "react-redux";
 import { userProfile } from "../../auth/auth";
 import { getUserProfileData } from "../../redux/AuthSlice";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import FullProfileImageModel from "../../components/ProfileComponents/FullProfileImageModel";
 import { UserPostsPage, UserProfileData } from "../../components";
 import axios from "axios";
-import UpdateSocialMediaPostForm from "../../components/postComponents/UpdateSocialMediaPostForm";
+import FullProfileImageModel from "../../components/ProfileComponents/FullProfileImageModel";
 import UpdatePostModel from "../../components/modelsComponents/UpdatePostModel";
 
 const UserProfile = () => {
   const _id = useParams();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [userProfileData, setUserProfileData] = useState(null);
-  console.log(userProfileData, "abcdefdg");
-  console.log(userProfileData);
   const [loadingUserProfile, setLoadingUserProfile] = useState(true);
   const [isFollowing, setIsFollowing] = useState(false);
   const [myPosts, setMyposts] = useState(null);
   const [open, setOpen] = useState(false);
-  const [openUpdateModel, setOpenUpdateModel] = useState(false);
+  const [isUpdatePostModal, setIsUpdatePostModal] = useState(false);
 
   const tokn = useSelector((state) => state.auth.accessToken);
 
@@ -44,31 +41,71 @@ const UserProfile = () => {
     };
 
     fetchUserProfileData();
-  }, []);
-
-  useEffect(() => {
-    const getMyPosts = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:8080/api/v1/social-media/posts/get/my?page=1&limit=10`,
-          {
-            headers: {
-              Authorization: `Bearer ${tokn}`,
-            },
-          }
-        );
-
-        if (response.data) {
-          setMyposts(response?.data?.data);
-        }
-
-        console.log(response?.data, "myposts");
-      } catch (error) {
-        console.log("username erroe", error);
-      }
-    };
     getMyPosts();
   }, []);
+
+
+  const getMyPosts = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/v1/social-media/posts/get/my?page=1&limit=10`,
+        {
+          headers: {
+            Authorization: `Bearer ${tokn}`,
+          },
+        }
+      );
+
+      if (response.data) {
+        setMyposts(response?.data?.data);
+      }
+
+    } catch (error) {
+      console.log("username erroe", error);
+    }
+  };
+
+
+  const handleUpdatePosts = (postId) => {
+    let updatedPosts = myPosts?.posts.filter((post) => post._id != postId);
+    setMyposts(updatedPosts);
+  };
+  console.log('myPosts', { myPosts })
+
+  const handleDeletePost = async (postId) => {
+    const response = await axios.delete(
+      `http://localhost:8080/api/v1/social-media/posts/${postId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${tokn}`,
+        },
+      }
+    );
+    if (response.status == 200) {
+      // handleUpdatePosts(postId);
+      getMyPosts();
+    }
+  };
+
+  const handleTime = (time) => {
+    const originalDateString = time;
+  const originalDate = new Date(originalDateString);
+  
+  const formattedDate = `${
+    (originalDate.getMonth() + 1).toString().padStart(2, '0')
+  }/${
+    originalDate.getDate().toString().padStart(2, '0')
+  }/${
+    originalDate.getFullYear()
+  } ${
+    originalDate.getHours().toString().padStart(2, '0')
+  }:${
+    originalDate.getMinutes().toString().padStart(2, '0')
+  }:${
+    originalDate.getSeconds().toString().padStart(2, '0')
+  }`;
+  return formattedDate
+  }
 
   return (
     <>
@@ -78,10 +115,11 @@ const UserProfile = () => {
             serachProfileData={serachProfileData}
             isFollowing={isFollowing}
             tokn={tokn}
+            handleTime={handleTime}
           />
         </div>
       ) : (
-        <div className="w-full mx-auto px-10">
+        <div className="w-full mx-auto md:px-10">
           <div className="px-3 py-2">
             <div className="flex flex-col gap-1 text-center">
               <img
@@ -100,7 +138,7 @@ const UserProfile = () => {
                 {userProfileData?.data?.location}
               </span>
               <span className="text-sm font-fontNunito text-white capitalize">
-                {userProfileData?.data?.dob}
+                {handleTime(userProfileData?.data?.dob)}
               </span>
             </div>
 
@@ -188,13 +226,26 @@ const UserProfile = () => {
               </button>
             </div>
 
-            <div className="grid lg:grid-cols-3 md:grid-cols-2  gap-2 my-3">
-              <UserPostsPage myPosts={myPosts} tokn={tokn} setMyposts={setMyposts} setOpenUpdateModel={setOpenUpdateModel}/>
+            <div className="grid lg:grid-cols-4  md:grid-cols-2  gap-2 my-3">
+              <UserPostsPage
+                myPosts={myPosts}
+                open={open}
+                setOpen={setOpen}
+                tokn={tokn}
+                setMyposts={setMyposts}
+                isUpdatePostModal={isUpdatePostModal}
+                setIsUpdatePostModal={setIsUpdatePostModal}
+                handleDeletePost={handleDeletePost}
+                handleTime={handleTime}
+              />
             </div>
           </div>
 
           <div className="flex justify-between items-center bg-yellow-600 bg-opacity-20 px-10 py-5 rounded-full text-gray-500">
-            <button className="p-2 rounded-full bg-white" onClick={() => navigate('/')}>
+            <button
+              className="p-2 rounded-full bg-white"
+              onClick={() => navigate("/")}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-8 w-8 text-pink-500"
@@ -220,7 +271,10 @@ const UserProfile = () => {
                 />
               </svg>
             </button>
-            <button className="p-2 rounded-full bg-pink-500" onClick={() => navigate('/postForm')}>
+            <button
+              className="p-2 rounded-full bg-pink-500"
+              onClick={() => navigate("/postForm")}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="text-white h-8 w-8"
@@ -269,10 +323,11 @@ const UserProfile = () => {
               </svg>
             </button>
           </div>
-          <FullProfileImageModel open={open} setOpen={setOpen} />
-          <UpdatePostModel openUpdateModel={openUpdateModel} setOpenUpdateModel={setOpenUpdateModel} myPosts={myPosts} tokn={tokn} setMyposts={setMyposts}/>
         </div>
       )}
+
+<FullProfileImageModel open={open} setOpen={setOpen} />
+
     </>
   );
 };

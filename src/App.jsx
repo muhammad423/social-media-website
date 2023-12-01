@@ -12,6 +12,7 @@ import {
   UpdateProfiledata,
   SocialMediaPostForm,
   UserPost,
+  UpdatePost,
 } from "./pages";
 import ProtectedRouters from "./components/protectedRouter/ProtectedRouters";
 import { currentUser, userProfile } from "./auth/auth";
@@ -104,6 +105,14 @@ function App() {
             element={
               <ProtectedRouters curUser={curUser} tokn={tokn}>
                 <UserPost/>
+              </ProtectedRouters>
+            }
+          />
+           <Route
+            path="/updatePost/:postId"
+            element={
+              <ProtectedRouters curUser={curUser} tokn={tokn}>
+                <UpdatePost/>
               </ProtectedRouters>
             }
           />

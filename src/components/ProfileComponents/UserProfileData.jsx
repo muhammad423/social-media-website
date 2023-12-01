@@ -4,7 +4,7 @@ import axios from 'axios'
 
 
 
-const UserProfileData = ({serachProfileData, isFollowing, tokn}) => {
+const UserProfileData = ({serachProfileData, isFollowing, tokn, handleTime}) => {
   const [oneUserPosts, setOneUserPosts] = useState()
     console.log('data2', serachProfileData)
     useEffect(() => {
@@ -48,7 +48,7 @@ const UserProfileData = ({serachProfileData, isFollowing, tokn}) => {
               {serachProfileData?.data?.location}
             </span>
             <span className="text-sm font-fontNunito text-white capitalize">
-              {serachProfileData?.data?.dob}
+              {handleTime(serachProfileData?.data?.dob)}
             </span>
           </div>
 

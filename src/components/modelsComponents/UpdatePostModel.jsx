@@ -9,14 +9,14 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function UpdatePostModel({ openUpdateModel, setOpenUpdateModel, myPosts, tokn, setMyposts }) {
-   const handleClick = () => {
-    setOpenUpdateModel(false)
-   }
+export default function UpdatePostModel({ isUpdatePostModal, setIsUpdatePostModal,  tokn, updateData }) {
 
+    const handleClose = () => {
+      setIsUpdatePostModal(false)
+    }
   return (
-    <Transition.Root show={openUpdateModel} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={setOpenUpdateModel}>
+    <Transition.Root show={isUpdatePostModal} as={Fragment}>
+      <Dialog as="div" className="relative z-10" onClose={setIsUpdatePostModal}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -45,14 +45,14 @@ export default function UpdatePostModel({ openUpdateModel, setOpenUpdateModel, m
                   <button
                     type="button"
                     className="absolute right-4 top-4 text-gray-400 hover:text-gray-500 sm:right-6 sm:top-8 md:right-6 md:top-6 lg:right-8 lg:top-8"
-                    onClick={handleClick}
+                    onClick={handleClose}
                   >
                     <span className="sr-only">Close</span>
                     <XMarkIcon className="h-6 w-6" aria-hidden="true" />
                   </button>
 
-                  <div className="w-full">
-                    <UpdateSocialMediaPostForm  myPosts={myPosts} tokn={tokn} setMyposts={setMyposts}/>
+                  <div className="w-full h-full">
+                    <UpdateSocialMediaPostForm tokn={tokn}   updateData={updateData}/>
                   </div>
                 </div>
               </Dialog.Panel>

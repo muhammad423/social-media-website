@@ -14,10 +14,28 @@ const usersProfile = async(query) => {
   if(data){
     dispatch(getSearchUserProfileData(data))
   }
-  console.log(data, 'single')
  }
  
-  const navigate = useNavigate()
+ const handleTime = (time) => {
+  const originalDateString = time;
+const originalDate = new Date(originalDateString);
+
+const formattedDate = `${
+  (originalDate.getMonth() + 1).toString().padStart(2, '0')
+}/${
+  originalDate.getDate().toString().padStart(2, '0')
+}/${
+  originalDate.getFullYear()
+} ${
+  originalDate.getHours().toString().padStart(2, '0')
+}:${
+  originalDate.getMinutes().toString().padStart(2, '0')
+}:${
+  originalDate.getSeconds().toString().padStart(2, '0')
+}`;
+return formattedDate
+}
+
   return (
     <>
       {allPosts &&
@@ -38,18 +56,29 @@ const usersProfile = async(query) => {
                   {postData?.author?.account?.username}
                 </p>
                 </Link>
-                <p className="text-gray-500 text-sm">{postData?.createdAt}</p>
+                <p className="text-gray-500 text-sm">{handleTime(postData?.createdAt)}</p>
               </div>
             </div>
             <p className="mt-2">{postData?.content}</p>
+            <div>
+            {postData?.tags && (
+                  <div className="mb-4 flex items-center gap-5">
+                    {postData?.tags.map((tag, index) => (
+                      <p key={index}>
+                        <b>{tag}</b>
+                      </p>
+                    ))}
+                  </div>
+                )}
+            </div>
             {postData?.images && (
-              <div className="mb-4">
+              <div className={`mb-4 grid ${postData?.images?.length > 1 ? 'grid-cols-2': 'grid-cols-1'} gap-3`}>
                 {postData?.images.map((image, index) => (
                   <img
                     key={index}
                     src={image?.url}
                     alt={`Post Image ${index + 1}`}
-                    className="w-full rounded-md"
+                    className="w-full h-[300px] rounded-md object-cover overflow-hidden"
                   />
                 ))}
               </div>

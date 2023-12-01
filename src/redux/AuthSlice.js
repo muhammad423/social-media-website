@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-
 const getAccessTokenFromLocalStorage = () => {
   return localStorage.getItem("accessToken") || null;
 };
@@ -15,10 +14,11 @@ const getUserPostsFromLocalStorage = () => {
 const initialState = {
   accessToken: getAccessTokenFromLocalStorage(),
   userInformation: JSON.parse(localStorage.getItem("userInformation")) || null,
-  userProfileData: JSON.parse(localStorage.getItem('userProfileData')) || [],
+  userProfileData: JSON.parse(localStorage.getItem("userProfileData")) || [],
   refreshToken: getRefreshTokenFromLocalStorage(),
-  searchUserProfileData: JSON.parse(localStorage.getItem('userSearchData')) || null,
-  userPosts: getUserPostsFromLocalStorage()
+  searchUserProfileData:
+    JSON.parse(localStorage.getItem("userSearchData")) || null,
+  userPosts: getUserPostsFromLocalStorage(),
 };
 
 export const authSlice = createSlice({
@@ -52,7 +52,7 @@ export const authSlice = createSlice({
       localStorage.setItem("userSearchData", JSON.stringify(action.payload));
     },
     getUserPosts: (state, action) => {
-      state.userPosts =[...state.userPosts ,action.payload]
+      state.userPosts = [...state.userPosts, action.payload];
       localStorage.setItem("userPosts", JSON.stringify(state.userPosts));
     },
   },
@@ -65,7 +65,7 @@ export const {
   getUserProfileData,
   authRefreshToken,
   getSearchUserProfileData,
-  getUserPosts
+  getUserPosts,
 } = authSlice.actions;
 
 export default authSlice.reducer;

@@ -7,43 +7,34 @@ import {
   FaEdit,
   FaTrash,
 } from "react-icons/fa";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import UpdatePostModel from "../modelsComponents/UpdatePostModel";
 
-const UserPostsPage = ({ oneUserPosts, myPosts, tokn, setMyposts, setOpenUpdateModel }) => {
-
-  const navigate = useNavigate();
+const UserPostsPage = ({
+  oneUserPosts,
+  isUpdatePostModal,
+  setIsUpdatePostModal,
+  myPosts,
+  tokn,
+  handleDeletePost,
+  handleTime
+}) => {
   const [isLiked, setLiked] = useState(false);
   const [isBookmarked, setBookmarked] = useState(false);
-  const { userPosts } = useSelector((state) => state.auth);
-  console.log("userPost Data profile", userPosts);
+  const [updateData, setUpdateData] = useState(null);
 
   const handleLike = () => {
     setLiked(!isLiked);
   };
 
+  const handleEdit = (post) => {
+    setIsUpdatePostModal(true);
+    setUpdateData(post);
+  };
+
   const handleBookmark = () => {
     setBookmarked(!isBookmarked);
   };
-
-  const handleUpdatePosts = (postId) => {
-    let updatedPosts = myPosts?.posts.filter((post) => post._id != postId)
-    setMyposts(updatedPosts)
-  }
-
-  const handleDeletePost = async (postId) => {
-    const response = await axios.delete(`http://localhost:8080/api/v1/social-media/posts/${postId}`, {
-      headers: {
-        Authorization: `Bearer ${tokn}`
-      }
-    })
-    if (response.status == 200) {
-      handleUpdatePosts(postId)
-    }
-
-  }
-
-
+  
   return (
     <>
       {oneUserPosts ? (
@@ -62,21 +53,10 @@ const UserPostsPage = ({ oneUserPosts, myPosts, tokn, setMyposts, setOpenUpdateM
                       <p className="font-bold">
                         {post.author?.account?.username}
                       </p>
-                      <p className="text-gray-500">{post?.createdAt}</p>
+                      <p className="text-gray-500">{handleTime(post?.createdAt)}</p>
                     </div>
                   </div>
-                  <div>
-                    {/* <div>
-                      <div className="flex space-x-2">
-                        <button className="text-gray-500">
-                          <FaEdit />
-                        </button>
-                        <button className="text-red-500">
-                          <FaTrash />
-                        </button>
-                      </div>
-                    </div> */}
-                  </div>
+                  <div></div>
                 </div>
 
                 <p className="mb-4">{post?.content}</p>
@@ -92,7 +72,7 @@ const UserPostsPage = ({ oneUserPosts, myPosts, tokn, setMyposts, setOpenUpdateM
 
                 {/* Display images, videos, etc. as needed */}
                 {post?.images && (
-                  <div className="mb-4">
+                  <div className="mb-4 grid grid-cols-2 gap-3">
                     {post?.images.map((image, index) => (
                       <img
                         key={index}
@@ -108,8 +88,9 @@ const UserPostsPage = ({ oneUserPosts, myPosts, tokn, setMyposts, setOpenUpdateM
                   <div className="flex items-center space-x-4">
                     <button
                       onClick={handleLike}
-                      className={`flex items-center space-x-1 ${isLiked ? "text-blue-500" : "text-gray-500"
-                        }`}
+                      className={`flex items-center space-x-1 ${
+                        isLiked ? "text-blue-500" : "text-gray-500"
+                      }`}
                     >
                       <FaThumbsUp />
                       <span>{post?.likes} Likes</span>
@@ -133,8 +114,10 @@ const UserPostsPage = ({ oneUserPosts, myPosts, tokn, setMyposts, setOpenUpdateM
         <>
           {myPosts?.posts?.map((post) => (
             <>
-              <div className="bg-white p-4 my-4 rounded-md shadow-md">
-                <div className="flex items-center justify-between mb-4">
+              <div
+                className={`bg-white p-4 my-4  shadow-md relative `}
+              >
+                <div className="flex items-center justify-between mb-4 ">
                   <div className="flex items-center">
                     <img
                       src={post.author?.account?.avatar?.url}
@@ -145,26 +128,49 @@ const UserPostsPage = ({ oneUserPosts, myPosts, tokn, setMyposts, setOpenUpdateM
                       <p className="font-bold">
                         {post.author?.account?.username}
                       </p>
-                      <p className="text-gray-500">{post?.createdAt}</p>
+                      <p className="text-gray-500 text-xs">{handleTime(post?.createdAt)}</p>
                     </div>
                   </div>
                   <div>
                     <div>
                       <div className="flex space-x-2">
-                        <button className="text-gray-500" onClick={() => setOpenUpdateModel(true)}>
+                        <button
+                          className="text-gray-500"
+                          onClick={() => handleEdit(post)}
+                        >
                           <FaEdit />
                         </button>
-                        <button className="text-red-500" onClick={() => handleDeletePost(post?._id)}>
+                        <button
+                          className="text-red-500"
+                          onClick={() => handleDeletePost(post?._id)}
+                        >
                           <FaTrash />
                         </button>
                       </div>
                     </div>
                   </div>
                 </div>
-
-                <p className="mb-4">{post?.content}</p>
+                 
+               
+                  {
+                    post?.images.length === 0 ? (
+                      <div className=" flex justify-center  bg-bg_color text-white px-2 items-center flex-col gap-2 h-[300px]    text-center">
+                        <p className="mb-2 text-sm font-medium">{post?.content}</p>
+                        {post?.tags && (
+                     <div className="mb-1 flex items-center justify-center gap-2 ">
+                    {post?.tags.map((tag, index) => (
+                      <p key={index}>
+                        <b className="text-center">{tag}</b>
+                      </p>
+                    ))}
+                  </div>
+                )}
+                      </div>
+                    ):( <>
+                    <p className="mb-2">{post?.content}</p>
+                    
                 {post?.tags && (
-                  <div className="mb-4">
+                  <div className="mb-1 flex items-center gap-5">
                     {post?.tags.map((tag, index) => (
                       <p key={index}>
                         <b>{tag}</b>
@@ -172,27 +178,36 @@ const UserPostsPage = ({ oneUserPosts, myPosts, tokn, setMyposts, setOpenUpdateM
                     ))}
                   </div>
                 )}
+                    </>)
+                  }
+              
+                
 
                 {/* Display images, videos, etc. as needed */}
                 {post?.images && (
-                  <div className="mb-4">
+                  <div
+                    className={`mb-4 grid gap-3 ${
+                      post?.images.length > 1 ? "grid-cols-2" : "grid-cols-1"
+                    }`}
+                  >
                     {post?.images.map((image, index) => (
                       <img
                         key={index}
                         src={image?.url}
                         alt={`Post Image ${index + 1}`}
-                        className="w-full h-[300px] rounded-md mb-2 object-cover"
+                        className="w-full h-[250px] rounded-md mb-2 object-cover"
                       />
                     ))}
                   </div>
                 )}
 
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between absolute bottom-0 left-0 right-0 p-2 mt-3">
                   <div className="flex items-center space-x-4">
                     <button
                       onClick={handleLike}
-                      className={`flex items-center space-x-1 ${isLiked ? "text-blue-500" : "text-gray-500"
-                        }`}
+                      className={`flex items-center space-x-1 ${
+                        isLiked ? "text-blue-500" : "text-gray-500"
+                      }`}
                     >
                       <FaThumbsUp />
                       <span>{post?.likes} Likes</span>
@@ -213,12 +228,16 @@ const UserPostsPage = ({ oneUserPosts, myPosts, tokn, setMyposts, setOpenUpdateM
           ))}
         </>
       )}
+      {isUpdatePostModal && (
+        <UpdatePostModel
+          isUpdatePostModal={isUpdatePostModal}
+          setIsUpdatePostModal={setIsUpdatePostModal}
+          updateData={updateData}
+          tokn={tokn}
+        />
+      )}
     </>
   );
 };
 
 export default UserPostsPage;
-
-
-
-

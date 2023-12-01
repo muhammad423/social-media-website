@@ -9,6 +9,7 @@ import UpdateProfiledata from "./profile/UpdateProfiledata";
 import UpdateProfileImage from "../components/ProfileComponents/UpdateProfileImage";
 import SocialMediaPostForm from "./userPosts/SocialMediaPostForm";
 import UserPost from "./userPosts/UserPost";
+import UpdatePost from "./userPosts/UpdatePost";
 
 
 
@@ -24,4 +25,5 @@ export{
     UpdateProfileImage,
     SocialMediaPostForm,
     UserPost,
+    UpdatePost
 }
