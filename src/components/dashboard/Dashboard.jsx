@@ -18,13 +18,13 @@ import {
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { authclearAccessToken } from "../../redux/AuthSlice";
-import { userLogedOut } from "../../auth/auth";
+import { userLikeOrUnLikePost, userLogedOut } from "../../auth/auth";
 import axios from "axios";
 import SearchUserProfile from "../ProfileComponents/SearchUserProfile";
 import UserPostsPage from "../postComponents/UserPostsPage";
 import AddPostButton from "../ProfileComponents/AddPostButton";
 import AllPosts from "../postComponents/AllPosts";
-
+import CommentBoxModel from "../modelsComponents/CommentBoxModel";
 
 const navigation = [
   { name: "Dashboard", href: "#", icon: HomeIcon, current: true },
@@ -44,13 +44,15 @@ function classNames(...classes) {
 }
 
 export default function Dashboard() {
+  const [isOpenCBox, setIsOpenCBox] = useState(false);
+  const [LikedPost, setLikedPost] = useState();
+  const [isLikedPost, setIsLikedPost] = useState(LikedPost);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const userProfileDataId = useSelector((state) => state.auth.userInformation);
   const dispatch = useDispatch();
   const tokn = useSelector((state) => state.auth.accessToken);
-  const [allPosts, setAllPosts] = useState(null)
-  console.log('all posts',allPosts)
-
+  const [allPosts, setAllPosts] = useState(null);
+  console.log("all posts", allPosts);
 
   const handleLogout = async () => {
     try {
@@ -64,25 +66,39 @@ export default function Dashboard() {
   useEffect(() => {
     const getAllPosts = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/v1/social-media/posts?page=1&limit=40`, {
-          headers: {
-            Authorization: `Bearer ${tokn}`
+        const response = await axios.get(
+          `http://localhost:8080/api/v1/social-media/posts?page=1&limit=40`,
+          {
+            headers: {
+              Authorization: `Bearer ${tokn}`,
+            },
           }
-        })
-        
-        if(response.data?.data){
-          setAllPosts(response.data?.data?.posts  )
-        }
-         console.log(response?.data, 'alll allla posts')
-        
-      } catch (error) {
-        console.log('username erroe', error)
-      }
-    }
-    getAllPosts()
-  }, [])
+        );
 
- 
+        if (response.data?.data) {
+          setAllPosts(response.data?.data?.posts);
+        }
+        console.log(response?.data, "alll allla posts");
+      } catch (error) {
+        console.log("username erroe", error);
+      }
+    };
+    getAllPosts();
+  }, [LikedPost, setIsLikedPost, isLikedPost]);
+
+  const handleLike = async (postId, tokn) => {
+    try {
+      const response = await userLikeOrUnLikePost(postId, tokn);
+      if (response?.statusCode == 200) {
+        setLikedPost(response?.data?.isLiked);
+        setIsLikedPost(!isLikedPost);
+        console.log("post like un like data", response);
+      }
+    } catch (error) {
+      console.log("like unlike post error", error);
+    }
+  };
+
   return (
     <>
       <div>
@@ -236,10 +252,10 @@ export default function Dashboard() {
                 <label htmlFor="search-field" className="sr-only">
                   Search
                 </label>
-                
-               <div className="block xl:hidden">
-               <SearchUserProfile />
-               </div>
+
+                <div className="block xl:hidden">
+                  <SearchUserProfile />
+                </div>
               </form>
               <div className="flex items-center gap-x-4 lg:gap-x-6">
                 <button
@@ -260,35 +276,33 @@ export default function Dashboard() {
                 <Menu as="div" className="relative">
                   <Menu.Button className="-m-1.5 flex items-center p-1.5">
                     <span className="sr-only">Open user menu</span>
-                   {
-                    tokn ? (
+                    {tokn ? (
                       <>
-                         <img
-                      className="h-8 w-8 rounded-full bg-gray-50"
-                      src={userProfileDataId?.avatar?.url}
-                      alt=""
-                    />
-                    <span className="hidden lg:flex lg:items-center">
-                      <span
-                        className="ml-4 text-sm font-semibold leading-6 text-gray-900"
-                        aria-hidden="true"
-                      >
-                        {userProfileDataId?.username}
-                      </span>
-                      <ChevronDownIcon
-                        className="ml-2 h-5 w-5 text-gray-400"
-                        aria-hidden="true"
-                      />
-                    </span>
+                        <img
+                          className="h-8 w-8 rounded-full bg-gray-50"
+                          src={userProfileDataId?.avatar?.url}
+                          alt=""
+                        />
+                        <span className="hidden lg:flex lg:items-center">
+                          <span
+                            className="ml-4 text-sm font-semibold leading-6 text-gray-900"
+                            aria-hidden="true"
+                          >
+                            {userProfileDataId?.username}
+                          </span>
+                          <ChevronDownIcon
+                            className="ml-2 h-5 w-5 text-gray-400"
+                            aria-hidden="true"
+                          />
+                        </span>
                       </>
-                    ):(
+                    ) : (
                       <Link to="/signin">
-                      <button className="block px-3 py-1 text-sm leading-6 text-gray-900">
-                        Login
-                      </button>
-                    </Link>
-                    )
-                   }
+                        <button className="block px-3 py-1 text-sm leading-6 text-gray-900">
+                          Login
+                        </button>
+                      </Link>
+                    )}
                   </Menu.Button>
                   <Transition
                     as={Fragment}
@@ -300,16 +314,16 @@ export default function Dashboard() {
                     leaveTo="transform opacity-0 scale-95"
                   >
                     <Menu.Items className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
-                      {tokn && (<Menu.Item>
-
-                        <Link
-                          to={`/userProfile/${userProfileDataId._id}`}
-                          className="block px-3 py-1 text-sm leading-6 text-gray-900"
-                        >
-                          User Profile
-                        </Link>
-
-                      </Menu.Item>)}
+                      {tokn && (
+                        <Menu.Item>
+                          <Link
+                            to={`/userProfile/${userProfileDataId._id}`}
+                            className="block px-3 py-1 text-sm leading-6 text-gray-900"
+                          >
+                            User Profile
+                          </Link>
+                        </Menu.Item>
+                      )}
                       <Menu.Item>
                         {tokn ? (
                           <button
@@ -332,15 +346,21 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
-          
 
           <main className="xl:pl-96 md:pr-80">
             <div className="px-4 py-10 sm:px-6 lg:px-8 lg:py-6">
               <AddPostButton />
-             <AllPosts
-               allPosts={allPosts}
-               tokn={tokn}
-             />
+              <AllPosts
+                allPosts={allPosts}
+                tokn={tokn}
+                handleLike={handleLike}
+                LikedPost={LikedPost}
+                setLikedPost={setLikedPost}
+                isLikedPost={isLikedPost}
+                setIsLikedPost={setIsLikedPost}
+                isOpenCBox={isOpenCBox}
+                setIsOpenCBox={setIsOpenCBox}
+              />
             </div>
           </main>
         </div>

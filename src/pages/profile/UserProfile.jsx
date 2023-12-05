@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { userProfile } from "../../auth/auth";
+import { userLikeOrUnLikePost, userProfile } from "../../auth/auth";
 import { getUserProfileData } from "../../redux/AuthSlice";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { UserPostsPage, UserProfileData } from "../../components";
 import axios from "axios";
 import FullProfileImageModel from "../../components/ProfileComponents/FullProfileImageModel";
-import UpdatePostModel from "../../components/modelsComponents/UpdatePostModel";
+
 
 const UserProfile = () => {
-  const _id = useParams();
+  const [LikedPost, setLikedPost] = useState();
+  const [isLikedPost, setIsLikedPost] = useState(LikedPost);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [userProfileData, setUserProfileData] = useState(null);
+  console.log(userProfileData, 'userpofggh')
   const [loadingUserProfile, setLoadingUserProfile] = useState(true);
   const [isFollowing, setIsFollowing] = useState(false);
   const [myPosts, setMyposts] = useState(null);
@@ -42,7 +44,7 @@ const UserProfile = () => {
 
     fetchUserProfileData();
     getMyPosts();
-  }, []);
+  }, [LikedPost]);
 
 
   const getMyPosts = async () => {
@@ -66,11 +68,18 @@ const UserProfile = () => {
   };
 
 
-  const handleUpdatePosts = (postId) => {
-    let updatedPosts = myPosts?.posts.filter((post) => post._id != postId);
-    setMyposts(updatedPosts);
+  const handleLike = async (postId, tokn) => {
+    try {
+      const response = await userLikeOrUnLikePost(postId, tokn);
+      if (response?.statusCode == 200) {
+        setLikedPost(response?.data?.isLiked);
+        setIsLikedPost(!isLikedPost);
+        console.log("post like un like data", response);
+      }
+    } catch (error) {
+      console.log("like unlike post error", error);
+    }
   };
-  console.log('myPosts', { myPosts })
 
   const handleDeletePost = async (postId) => {
     const response = await axios.delete(
@@ -116,7 +125,8 @@ const UserProfile = () => {
             isFollowing={isFollowing}
             tokn={tokn}
             handleTime={handleTime}
-          />
+           
+            />
         </div>
       ) : (
         <div className="w-full mx-auto md:px-10">
@@ -144,7 +154,7 @@ const UserProfile = () => {
 
             <div className="flex justify-center items-center gap-2 my-3">
               <div className="text-center mx-4">
-                <p className="text-black">0</p>
+                <p className="text-white">{myPosts?.posts?.length}</p>
                 <span className="font-fontNunito text-white capitalize">
                   Posts
                 </span>
@@ -237,6 +247,8 @@ const UserProfile = () => {
                 setIsUpdatePostModal={setIsUpdatePostModal}
                 handleDeletePost={handleDeletePost}
                 handleTime={handleTime}
+                handleLike={handleLike}
+                
               />
             </div>
           </div>

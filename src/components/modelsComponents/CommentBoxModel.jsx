@@ -1,22 +1,13 @@
-
 import { Fragment } from "react";
 import { Dialog, RadioGroup, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import UpdateSocialMediaPostForm from "../postComponents/UpdateSocialMediaPostForm";
+import CommentBox from '../postComponents/CommentBox'
 
+const CommentBoxModel = ({isOpenCBox, setIsOpenCBox, tokn, posts, handleTime}) => {
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
-
-export default function UpdatePostModel({ isUpdatePostModal, setIsUpdatePostModal,  tokn, updateData }) {
-
-    const handleClose = () => {
-      setIsUpdatePostModal(false)
-    }
   return (
-    <Transition.Root show={isUpdatePostModal} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={setIsUpdatePostModal}>
+    <Transition.Root show={isOpenCBox} as={Fragment}>
+      <Dialog as="div" className="relative z-10" onClose={setIsOpenCBox}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -45,14 +36,14 @@ export default function UpdatePostModel({ isUpdatePostModal, setIsUpdatePostModa
                   <button
                     type="button"
                     className="absolute right-4 top-4 text-gray-400 hover:text-gray-500 sm:right-6 sm:top-8 md:right-6 md:top-6 lg:right-8 lg:top-8"
-                    onClick={handleClose}
+                    onClick={() => setIsOpenCBox(false)}
                   >
                     <span className="sr-only">Close</span>
                     <XMarkIcon className="h-6 w-6" aria-hidden="true" />
                   </button>
 
-                  <div className="w-full h-full">
-                    <UpdateSocialMediaPostForm tokn={tokn}  updateData={updateData}/>
+                  <div className="h-full w-full">
+                    <CommentBox tokn={tokn} posts={posts} handleTime={handleTime}/>
                   </div>
                 </div>
               </Dialog.Panel>
@@ -61,5 +52,7 @@ export default function UpdatePostModel({ isUpdatePostModal, setIsUpdatePostModa
         </div>
       </Dialog>
     </Transition.Root>
-  );
+  )
 }
+
+export default CommentBoxModel

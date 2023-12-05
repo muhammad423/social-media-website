@@ -6,7 +6,9 @@ import UserProfileData from "./ProfileComponents/UserProfileData";
 import UserPostsPage from "./postComponents/UserPostsPage";
 import AddPostButton from "./ProfileComponents/AddPostButton";
 import AllPosts from "./postComponents/AllPosts";
-
+import CommentBox from "./postComponents/CommentBox";
+import CommentBoxModel from "./modelsComponents/CommentBoxModel";
+import AddComments from "./postComponents/AddComments";
 
 export {
     RegisterPage,
@@ -16,5 +18,8 @@ export {
     UserProfileData,
     UserPostsPage,
     AddPostButton,
-    AllPosts
+    AllPosts,
+    CommentBox,
+    CommentBoxModel,
+    AddComments
 }

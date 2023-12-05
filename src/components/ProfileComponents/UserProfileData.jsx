@@ -28,6 +28,7 @@ const UserProfileData = ({serachProfileData, isFollowing, tokn, handleTime}) => 
       };
       getPostsByUserName();
     }, []);
+
   return (
     <div>
         <div className="w-full px-10 mx-auto">

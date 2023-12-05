@@ -20,7 +20,7 @@ export default function SearchUserProfile() {
   const [query, setQuery] = useState("");
   const [selectedPerson, setSelectedPerson] = useState(null);
   const [userProfile, setUserProfile] = useState("");
-  console.log("userProfile", userProfile);
+
 
   useEffect(() => {
   const profileByName = async() => {

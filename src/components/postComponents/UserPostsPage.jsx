@@ -8,6 +8,7 @@ import {
   FaTrash,
 } from "react-icons/fa";
 import UpdatePostModel from "../modelsComponents/UpdatePostModel";
+import { userLikeOrUnLikePost } from "../../auth/auth";
 
 const UserPostsPage = ({
   oneUserPosts,
@@ -16,15 +17,13 @@ const UserPostsPage = ({
   myPosts,
   tokn,
   handleDeletePost,
-  handleTime
+  handleTime,
+  handleLike
 }) => {
-  const [isLiked, setLiked] = useState(false);
   const [isBookmarked, setBookmarked] = useState(false);
   const [updateData, setUpdateData] = useState(null);
 
-  const handleLike = () => {
-    setLiked(!isLiked);
-  };
+    
 
   const handleEdit = (post) => {
     setIsUpdatePostModal(true);
@@ -34,14 +33,14 @@ const UserPostsPage = ({
   const handleBookmark = () => {
     setBookmarked(!isBookmarked);
   };
-  
+
   return (
     <>
       {oneUserPosts ? (
         <>
           {oneUserPosts?.data?.posts?.map((post) => (
             <>
-              <div className="bg-white p-4 my-4 rounded-md shadow-md">
+              <div className="bg-white p-4 my-4 rounded-md relative shadow-md">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center">
                     <img
@@ -53,41 +52,64 @@ const UserPostsPage = ({
                       <p className="font-bold">
                         {post.author?.account?.username}
                       </p>
-                      <p className="text-gray-500">{handleTime(post?.createdAt)}</p>
+                      <p className="text-gray-500">
+                        {() => handleTime(post?.createdAt)}
+                      </p>
                     </div>
                   </div>
                   <div></div>
                 </div>
-
-                <p className="mb-4">{post?.content}</p>
-                {post?.tags && (
-                  <div className="mb-4">
-                    {post?.tags.map((tag, index) => (
-                      <p key={index}>
-                        <b>{tag}</b>
-                      </p>
-                    ))}
+                {post?.images.length === 0 ? (
+                  <div className=" flex justify-center  bg-bg_color text-white px-2 items-center flex-col gap-2 h-[300px]   text-center">
+                    <p className="mb-2 text-sm font-medium">{post?.content}</p>
+                    {post?.tags && (
+                      <div className="mb-1 flex items-center justify-center gap-2 ">
+                        {post?.tags.map((tag, index) => (
+                          <p key={index}>
+                            <b className="text-center">{tag}</b>
+                          </p>
+                        ))}
+                      </div>
+                    )}
                   </div>
+                ) : (
+                  <>
+                    <p className="mb-2">{post?.content}</p>
+
+                    {post?.tags && (
+                      <div className="mb-1 flex items-center gap-5">
+                        {post?.tags.map((tag, index) => (
+                          <p key={index}>
+                            <b>{tag}</b>
+                          </p>
+                        ))}
+                      </div>
+                    )}
+                  </>
                 )}
 
                 {/* Display images, videos, etc. as needed */}
                 {post?.images && (
-                  <div className="mb-4 grid grid-cols-2 gap-3">
+                  <div
+                    className={`mb-4 grid gap-3 ${
+                      post?.images.length > 1 ? "grid-cols-2" : "grid-cols-1"
+                    }`}
+                  >
                     {post?.images.map((image, index) => (
                       <img
                         key={index}
                         src={image?.url}
                         alt={`Post Image ${index + 1}`}
-                        className="w-full h-[300px] rounded-md mb-2 object-cover"
+                        className="w-full h-[250px] rounded-md mb-2 object-cover"
                       />
                     ))}
                   </div>
                 )}
 
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between absolute bottom-0 left-0 right-0 p-2 mt-3">
                   <div className="flex items-center space-x-4">
                     <button
-                      onClick={handleLike}
+                      onClick={() => handleLike(post?._id, tokn)}
                       className={`flex items-center space-x-1 ${
                         isLiked ? "text-blue-500" : "text-gray-500"
                       }`}
@@ -114,9 +136,7 @@ const UserPostsPage = ({
         <>
           {myPosts?.posts?.map((post) => (
             <>
-              <div
-                className={`bg-white p-4 my-4  shadow-md relative `}
-              >
+              <div className={`bg-white p-4 my-4  shadow-md relative `}>
                 <div className="flex items-center justify-between mb-4 ">
                   <div className="flex items-center">
                     <img
@@ -128,7 +148,9 @@ const UserPostsPage = ({
                       <p className="font-bold">
                         {post.author?.account?.username}
                       </p>
-                      <p className="text-gray-500 text-xs">{handleTime(post?.createdAt)}</p>
+                      <p className="text-gray-500 text-xs">
+                        {handleTime(post?.createdAt)}
+                      </p>
                     </div>
                   </div>
                   <div>
@@ -150,38 +172,35 @@ const UserPostsPage = ({
                     </div>
                   </div>
                 </div>
-                 
-               
-                  {
-                    post?.images.length === 0 ? (
-                      <div className=" flex justify-center  bg-bg_color text-white px-2 items-center flex-col gap-2 h-[300px]    text-center">
-                        <p className="mb-2 text-sm font-medium">{post?.content}</p>
-                        {post?.tags && (
-                     <div className="mb-1 flex items-center justify-center gap-2 ">
-                    {post?.tags.map((tag, index) => (
-                      <p key={index}>
-                        <b className="text-center">{tag}</b>
-                      </p>
-                    ))}
-                  </div>
-                )}
+
+                {post?.images.length === 0 ? (
+                  <div className=" flex justify-center  bg-bg_color text-white px-2 items-center flex-col gap-2 h-[300px]    text-center">
+                    <p className="mb-2 text-sm font-medium">{post?.content}</p>
+                    {post?.tags && (
+                      <div className="mb-1 flex items-center justify-center gap-2 ">
+                        {post?.tags.map((tag, index) => (
+                          <p key={index}>
+                            <b className="text-center">{tag}</b>
+                          </p>
+                        ))}
                       </div>
-                    ):( <>
-                    <p className="mb-2">{post?.content}</p>
-                    
-                {post?.tags && (
-                  <div className="mb-1 flex items-center gap-5">
-                    {post?.tags.map((tag, index) => (
-                      <p key={index}>
-                        <b>{tag}</b>
-                      </p>
-                    ))}
+                    )}
                   </div>
+                ) : (
+                  <>
+                    <p className="mb-2">{post?.content}</p>
+
+                    {post?.tags && (
+                      <div className="mb-1 flex items-center gap-5">
+                        {post?.tags.map((tag, index) => (
+                          <p key={index}>
+                            <b>{tag}</b>
+                          </p>
+                        ))}
+                      </div>
+                    )}
+                  </>
                 )}
-                    </>)
-                  }
-              
-                
 
                 {/* Display images, videos, etc. as needed */}
                 {post?.images && (
@@ -204,9 +223,9 @@ const UserPostsPage = ({
                 <div className="flex items-center justify-between absolute bottom-0 left-0 right-0 p-2 mt-3">
                   <div className="flex items-center space-x-4">
                     <button
-                      onClick={handleLike}
+                      onClick={() => handleLike(post?._id, tokn)}
                       className={`flex items-center space-x-1 ${
-                        isLiked ? "text-blue-500" : "text-gray-500"
+                        post?.isLiked ? "text-blue-500" : "text-gray-500"
                       }`}
                     >
                       <FaThumbsUp />
