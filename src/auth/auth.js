@@ -88,7 +88,7 @@ export const userProfileByName = async (query, token) => {
         },
       }
     );
-    return response?.data;
+  if(response?.status == 200) return response?.data;
   } catch (error) {
     console.log(error, "error");
   }

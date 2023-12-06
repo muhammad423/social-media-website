@@ -1,27 +1,29 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { userCommentsPost } from "../../auth/auth";
 
-const AddComments = ({tokn, postsId, getUserComments}) => {
+const AddComments = ({ tokn, postsId, getUserComments, getAllPosts, getPostsByUserName}) => {
   const { handleSubmit, register, reset } = useForm();
 
-  const onSubmit = async(data) => {
-   try {
-    const response = await userCommentsPost(postsId, data, tokn)
-    if(response.statusCode == 201){
-        reset()
-        getUserComments()
+
+  const onSubmit = async (data) => {
+    try {
+      const response = await userCommentsPost(postsId, data, tokn);
+      if (response.statusCode == 201) {
+        reset();
+        getUserComments();
+        getAllPosts();
+      }
+      console.log("comment data", response?.data);
+    } catch (error) {
+      console.log("comment error", error);
     }
-    console.log('comment data', response?.data)
-   } catch (error) {
-     console.log('comment error', error)
-   }
-  }
+  };
   return (
     <form action="#" className="mt-4 z-20">
       <label for="comment" className="block">
         <textarea
-          {...register('content')}
+          {...register("content")}
           cols="30"
           rows="3"
           placeholder="Type your comment..."
@@ -34,7 +36,7 @@ const AddComments = ({tokn, postsId, getUserComments}) => {
         className="mt-2  inline-flex items-center justify-center text-gray-100 font-medium leading-none
            bg-blue-600 rounded-md py-2 px-3 border border-transparent transform-gpu hover:-translate-y-0.5 
            transition-all ease-in duration-300 hover:text-gray-200 hover:bg-blue-700 text-sm"
-           onClick={handleSubmit(onSubmit)}
+        onClick={handleSubmit(onSubmit)}
       >
         Post comment
         <svg

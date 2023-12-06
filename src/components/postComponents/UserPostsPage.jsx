@@ -9,6 +9,7 @@ import {
 } from "react-icons/fa";
 import UpdatePostModel from "../modelsComponents/UpdatePostModel";
 import { userLikeOrUnLikePost } from "../../auth/auth";
+import CommentBoxModel from "../modelsComponents/CommentBoxModel";
 
 const UserPostsPage = ({
   oneUserPosts,
@@ -18,10 +19,13 @@ const UserPostsPage = ({
   tokn,
   handleDeletePost,
   handleTime,
-  handleLike
+  handleLike,
+  getMyPosts,
+  getPostsByUserName
 }) => {
   const [isBookmarked, setBookmarked] = useState(false);
   const [updateData, setUpdateData] = useState(null);
+  const [isOpenCBox, setIsOpenCBox] = useState(false)
 
     
 
@@ -29,6 +33,11 @@ const UserPostsPage = ({
     setIsUpdatePostModal(true);
     setUpdateData(post);
   };
+
+const handleComment = (post) => {
+  setIsOpenCBox(true)
+  setUpdateData(post)
+}
 
   const handleBookmark = () => {
     setBookmarked(!isBookmarked);
@@ -111,13 +120,13 @@ const UserPostsPage = ({
                     <button
                       onClick={() => handleLike(post?._id, tokn)}
                       className={`flex items-center space-x-1 ${
-                        isLiked ? "text-blue-500" : "text-gray-500"
+                       post?.isLiked ? "text-blue-500" : "text-gray-500"
                       }`}
                     >
                       <FaThumbsUp />
                       <span>{post?.likes} Likes</span>
                     </button>
-                    <button className="flex items-center space-x-1 text-gray-500">
+                    <button className="flex items-center space-x-1 text-gray-500" onClick={() => handleComment(post?._id)}>
                       <FaComment />
                       <span>{post?.comments} Comments</span>
                     </button>
@@ -231,7 +240,7 @@ const UserPostsPage = ({
                       <FaThumbsUp />
                       <span>{post?.likes} Likes</span>
                     </button>
-                    <button className="flex items-center space-x-1 text-gray-500">
+                    <button className="flex items-center space-x-1 text-gray-500" onClick={() => handleComment(post?._id)}>
                       <FaComment />
                       <span>{post?.comments} Comments</span>
                     </button>
@@ -255,6 +264,16 @@ const UserPostsPage = ({
           tokn={tokn}
         />
       )}
+
+      <CommentBoxModel 
+      isOpenCBox={isOpenCBox} 
+      setIsOpenCBox={setIsOpenCBox} 
+      posts={updateData} 
+      tokn={tokn} 
+      handleTime={handleTime} 
+      getMyPosts={getMyPosts}
+      getPostsByUserName={getPostsByUserName}
+      />
     </>
   );
 };

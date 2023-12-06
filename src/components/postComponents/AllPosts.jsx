@@ -15,8 +15,9 @@ const AllPosts = ({
   isLikedPost,
   setIsOpenCBox,
   isOpenCBox,
+  getAllPosts,
 }) => {
-  const [posts, setPosts] = useState(null)
+  const [posts, setPosts] = useState(null);
   const dispatch = useDispatch();
   const usersProfile = async (query) => {
     const data = await userProfileByName(query, tokn);
@@ -49,13 +50,15 @@ const AllPosts = ({
 
   const sortedPosts = allPosts
     ?.slice()
-    ?.sort((a, b) => new Date(handleTime(b.createdAt)) - new Date(handleTime(a.createdAt)));
-
+    ?.sort(
+      (a, b) =>
+        new Date(handleTime(b.createdAt)) - new Date(handleTime(a.createdAt))
+    );
 
   const handleComment = (posts) => {
-    setPosts(posts)
-    setIsOpenCBox(true)
-  }
+    setPosts(posts);
+    setIsOpenCBox(true);
+  };
   return (
     <>
       {sortedPosts &&
@@ -81,7 +84,9 @@ const AllPosts = ({
                     {postData?.author?.account?.username}
                   </p>
                 </Link>
-                <p className="text-gray-500 text-sm">{handleTime(postData?.createdAt)}</p>
+                <p className="text-gray-500 text-sm">
+                  {handleTime(postData?.createdAt)}
+                </p>
               </div>
             </div>
             <p className="mt-2">{postData?.content}</p>
@@ -125,7 +130,7 @@ const AllPosts = ({
                 </button>
                 <button
                   className="flex items-center text-gray-500"
-                  onClick={() => handleComment(postData?._id) }
+                  onClick={() => handleComment(postData?._id)}
                 >
                   <FaComment className="mr-2" />
                   {postData?.comments} Comment
@@ -144,7 +149,14 @@ const AllPosts = ({
         ))}
 
       <div className="my-4">
-      <CommentBoxModel isOpenCBox={isOpenCBox} setIsOpenCBox={setIsOpenCBox} posts={posts} tokn={tokn} handleTime={handleTime} />
+        <CommentBoxModel
+          isOpenCBox={isOpenCBox}
+          setIsOpenCBox={setIsOpenCBox}
+          posts={posts}
+          tokn={tokn}
+          handleTime={handleTime}
+          getAllPosts={getAllPosts}
+        />
       </div>
     </>
   );

@@ -1,10 +1,18 @@
 import { Fragment } from "react";
 import { Dialog, RadioGroup, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import CommentBox from '../postComponents/CommentBox'
+import CommentBox from "../postComponents/CommentBox";
 
-const CommentBoxModel = ({isOpenCBox, setIsOpenCBox, tokn, posts, handleTime}) => {
-
+const CommentBoxModel = ({
+  isOpenCBox,
+  setIsOpenCBox,
+  tokn,
+  posts,
+  handleTime,
+  getAllPosts,
+  getMyPosts,
+  getPostsByUserName
+}) => {
   return (
     <Transition.Root show={isOpenCBox} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={setIsOpenCBox}>
@@ -43,7 +51,14 @@ const CommentBoxModel = ({isOpenCBox, setIsOpenCBox, tokn, posts, handleTime}) =
                   </button>
 
                   <div className="h-full w-full">
-                    <CommentBox tokn={tokn} posts={posts} handleTime={handleTime}/>
+                    <CommentBox
+                      tokn={tokn}
+                      posts={posts}
+                      handleTime={handleTime}
+                      getAllPosts={getAllPosts}
+                      getMyPosts={getMyPosts}
+                      getPostsByUserName={getPostsByUserName}
+                    />
                   </div>
                 </div>
               </Dialog.Panel>
@@ -52,7 +67,7 @@ const CommentBoxModel = ({isOpenCBox, setIsOpenCBox, tokn, posts, handleTime}) =
         </div>
       </Dialog>
     </Transition.Root>
-  )
-}
+  );
+};
 
-export default CommentBoxModel
+export default CommentBoxModel;

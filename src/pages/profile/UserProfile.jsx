@@ -58,7 +58,7 @@ const UserProfile = () => {
         }
       );
 
-      if (response.data) {
+      if (response.status === 200) {
         setMyposts(response?.data?.data);
       }
 
@@ -91,7 +91,6 @@ const UserProfile = () => {
       }
     );
     if (response.status == 200) {
-      // handleUpdatePosts(postId);
       getMyPosts();
     }
   };
@@ -125,6 +124,8 @@ const UserProfile = () => {
             isFollowing={isFollowing}
             tokn={tokn}
             handleTime={handleTime}
+            handleLike={handleLike}
+            LikedPost={LikedPost}
            
             />
         </div>
@@ -248,6 +249,7 @@ const UserProfile = () => {
                 handleDeletePost={handleDeletePost}
                 handleTime={handleTime}
                 handleLike={handleLike}
+                getMyPosts={getMyPosts}
                 
               />
             </div>

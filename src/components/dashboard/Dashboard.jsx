@@ -64,27 +64,29 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    const getAllPosts = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:8080/api/v1/social-media/posts?page=1&limit=40`,
-          {
-            headers: {
-              Authorization: `Bearer ${tokn}`,
-            },
-          }
-        );
-
-        if (response.data?.data) {
-          setAllPosts(response.data?.data?.posts);
-        }
-        console.log(response?.data, "alll allla posts");
-      } catch (error) {
-        console.log("username erroe", error);
-      }
-    };
+   
     getAllPosts();
   }, [LikedPost, setIsLikedPost, isLikedPost]);
+
+  const getAllPosts = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/v1/social-media/posts?page=1&limit=40`,
+        {
+          headers: {
+            Authorization: `Bearer ${tokn}`,
+          },
+        }
+      );
+
+      if (response.data?.data) {
+        setAllPosts(response.data?.data?.posts);
+      }
+      console.log(response?.data, "alll allla posts");
+    } catch (error) {
+      console.log("username erroe", error);
+    }
+  };
 
   const handleLike = async (postId, tokn) => {
     try {
@@ -360,6 +362,7 @@ export default function Dashboard() {
                 setIsLikedPost={setIsLikedPost}
                 isOpenCBox={isOpenCBox}
                 setIsOpenCBox={setIsOpenCBox}
+                getAllPosts={getAllPosts}
               />
             </div>
           </main>

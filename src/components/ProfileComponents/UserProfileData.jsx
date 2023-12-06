@@ -4,30 +4,31 @@ import axios from 'axios'
 
 
 
-const UserProfileData = ({serachProfileData, isFollowing, tokn, handleTime}) => {
+const UserProfileData = ({serachProfileData, isFollowing, tokn, handleTime, handleLike, LikedPost}) => {
   const [oneUserPosts, setOneUserPosts] = useState()
-    console.log('data2', serachProfileData)
+
     useEffect(() => {
-      const getPostsByUserName = async () => {
-        try {
-          const response = await axios.get(
-            `http://localhost:8080/api/v1/social-media/posts/get/u/${serachProfileData?.data?.account?.username}?page=1&limit=10`,
-            {
-              headers: {
-                Authorization: `Bearer ${tokn}`,
-              },
-            }
-          );
-          if(response?.data){
-            setOneUserPosts(response?.data)
-          }
-          console.log(response?.data, "user posts  By name");
-        } catch (error) {
-          console.log("username errorrr", error);
-        }
-      };
       getPostsByUserName();
-    }, []);
+    }, [LikedPost]);
+
+    const getPostsByUserName = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/api/v1/social-media/posts/get/u/${serachProfileData?.data?.account?.username}?page=1&limit=10`,
+          {
+            headers: {
+              Authorization: `Bearer ${tokn}`,
+            },
+          }
+        );
+        if(response?.data){
+          setOneUserPosts(response?.data)
+        }
+        console.log(response?.data, "user posts  By name");
+      } catch (error) {
+        console.log("username errorrr", error);
+      }
+    };
 
   return (
     <div>
@@ -122,8 +123,8 @@ const UserProfileData = ({serachProfileData, isFollowing, tokn, handleTime}) => 
             </button>
           </div>
 
-          <div className="grid grid-cols-3 gap-2 my-3">
-           <UserPostsPage  oneUserPosts={oneUserPosts}/>
+          <div className="grid lg:grid-cols-4  md:grid-cols-2  gap-2 my-3">
+           <UserPostsPage  oneUserPosts={oneUserPosts} handleLike={handleLike} tokn={tokn} getPostsByUserName={getPostsByUserName}/>
           </div>
         </div>
 

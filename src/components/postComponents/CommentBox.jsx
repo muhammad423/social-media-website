@@ -1,39 +1,64 @@
 import React, { useEffect, useState } from "react";
 import AddComments from "./AddComments";
 import { getUserCommentsPost } from "../../auth/auth";
+import axios from "axios";
 
-const CommentBox = ({ tokn, posts, handleTime }) => {
-   const [comments, setComments] = useState(null)
-    console.log(comments, 'comments')
+const CommentBox = ({
+  tokn,
+  posts,
+  handleTime,
+  getAllPosts,
+  getMyPosts,
+  getPostsByUserName,
+}) => {
+  const [comments, setComments] = useState(null);
+
   useEffect(() => {
-    getUserComments()
-  },[])
-  const getUserComments = async() => {
+    getUserComments();
+  }, [posts]);
+  const getUserComments = async () => {
     try {
-     const response = await getUserCommentsPost(posts, tokn,)
-     if(response.statusCode === 200){
-        setComments(response?.data)
-     }
-     console.log(response)
+      const response = await getUserCommentsPost(posts, tokn);
+      if (response.statusCode === 200) {
+        setComments(response?.data);
+        getMyPosts();
+        getPostsByUserName();
+      }
     } catch (error) {
-      console.log('get Comment errors', error)
+      console.log("get Comment errors", error);
     }
-   }
+  };
 
+  const handleDeleteComment = async(postId, tokn) => {
+   try {
+    const response = await axios.delete(`http://localhost:8080/api/v1/social-media/comments/${postId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${tokn}`,
+      },
+    }
+    )
+   if(response?.status === 200){
+     getUserComments()
+     getAllPosts()
+  }
+    console.log('delet comment', response?.data)
+   } catch (error) {
+    console.log('delete comment error', error)
+   }
+  }
 
   return (
     <>
       <section className="place-items-center  h-screen py-4 sm:py-8 ">
-     
-          <div className="px-2 py-4 bg-white rounded-xl border shadow-xl mx-auto w-4/5 sm:max-w-md sm:px-5 hover:border-blue-200">
-            <small className="text-base font-bold text-gray-700 ml-1">
-               {comments?.comments?.length} Comments
-              </small>
-            <div className="my-4  h-[400px] overflow-y-scroll">
-        {
-          comments?.comments.map((user) => (
-            <div className="flex flex-col mt-2">
-                <div className="flex flex-row mx-auto justify-between px-1 py-1">
+        <div className="px-2 py-4 bg-white rounded-xl border shadow-xl mx-auto w-4/5 sm:max-w-md sm:px-5 hover:border-blue-200">
+          <small className="text-base font-bold text-gray-700 ml-1">
+            {comments?.comments?.length} Comments
+          </small>
+          <div className="my-4  h-[400px] overflow-y-scroll">
+            {comments?.comments.map((user) => (
+              <div className="flex flex-col mt-2">
+                <div className="flex flex-row  justify-between px-1 py-1">
                   <div className="flex mr-2">
                     <div className="items-center justify-center w-12 h-12 mx-auto">
                       <img
@@ -47,16 +72,12 @@ const CommentBox = ({ tokn, posts, handleTime }) => {
                     <div className="text-base font-semibold text-gray-600">
                       {user?.author?.firstName} {user?.author?.lastName}
                       <span className="text-sm font-normal text-gray-500">
-                       {handleTime(user?.createdAt)}
+                        {() => handleTime(user?.createdAt)}
                       </span>
                     </div>
-                    <div className="text-sm text-gray-600">
-                    {user?.content}
-                   
-                    </div>
+                    <div className="text-sm text-gray-600">{user?.content}</div>
                     <div className="flex items-center text-sm mt-1 space-x-3">
-                      <a
-                        href="#"
+                      <button
                         className="flex items-center text-blue-500 hover:text-blue-600"
                       >
                         <svg
@@ -71,10 +92,9 @@ const CommentBox = ({ tokn, posts, handleTime }) => {
                             clip-rule="evenodd"
                           />
                         </svg>
-                        <span className="font-semibold">2 Reply</span>
-                      </a>
-                      <a
-                        href="#"
+                        <span className="font-semibold">Reply</span>
+                      </button>
+                      <button
                         className="flex items-center text-red-500 hover:text-red-600 group"
                       >
                         <svg
@@ -90,23 +110,16 @@ const CommentBox = ({ tokn, posts, handleTime }) => {
                           />
                         </svg>
                         <span className="font-semibold ">11</span>
-                      </a>
-                      <a
-                        href="#"
-                        className="flex items-center text-blue-500 hover:text-blue-600"
+                      </button>
+                      <button
+                        className="flex items-center"
+                        onClick={() => handleDeleteComment(user?._id, tokn)}
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-4 w-4 mr-1"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" />
-                        </svg>
-                        <span className="font-semibold">Share</span>
-                      </a>
+                        <svg style={{color: '#2563EB'}} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-delete"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z" fill=""></path><line x1="18" y1="9" x2="12" y2="15"></line><line x1="12" y1="9" x2="18" y2="15"></line></svg>
+                       
+                      </button>
                     </div>
-                    <div className="flex flex-row mx-auto justify-between mt-4">
+                    {/* <div className="flex flex-row mx-auto justify-between mt-4">
                       <div className="flex mr-2">
                         <div className="items-center justify-center w-10 h-10 mx-auto">
                           <img
@@ -149,17 +162,20 @@ const CommentBox = ({ tokn, posts, handleTime }) => {
                           Lorem, ipsum dolor.
                         </div>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
-               
               </div>
-              
-            ))
-          }
-            </div>
+            ))}
+          </div>
 
-          <AddComments tokn={tokn} postsId={posts}  getUserComments={getUserComments}/>
+          <AddComments
+            tokn={tokn}
+            postsId={posts}
+            getUserComments={getUserComments}
+            getAllPosts={getAllPosts}
+            getPostsByUserName={getPostsByUserName}
+          />
         </div>
       </section>
     </>
