@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import AddComments from "./AddComments";
-import { getUserCommentsPost } from "../../auth/auth";
+import { getUserCommentsPost, userLikeOrUnLikePostComment } from "../../auth/auth";
 import axios from "axios";
 
 const CommentBox = ({
@@ -12,19 +12,21 @@ const CommentBox = ({
   getPostsByUserName,
 }) => {
   const [comments, setComments] = useState(null);
+  const [likeComments, setLikeComments] = useState(null)
+  const [isLikeComments, setIsLikeComments] = useState(likeComments)
 
   useEffect(() => {
     getUserComments();
-  }, [posts]);
+  }, [posts, likeComments]);
   const getUserComments = async () => {
     try {
       const response = await getUserCommentsPost(posts, tokn);
       if (response.statusCode === 200) {
         setComments(response?.data);
-        getMyPosts();
-        getPostsByUserName();
       }
-    } catch (error) {
+      getMyPosts();
+      getPostsByUserName();
+      } catch (error) {
       console.log("get Comment errors", error);
     }
   };
@@ -46,6 +48,21 @@ const CommentBox = ({
    } catch (error) {
     console.log('delete comment error', error)
    }
+  }
+
+  const handleLikeComment = async(postId, tokn) => {
+    try {
+      const response = await userLikeOrUnLikePostComment(postId, tokn)
+      if(response?.statusCode === 200){
+        setLikeComments(response?.data?.isLiked)
+        if(likeComments){
+          setIsLikeComments((prev) => !prev)
+        }
+      }
+      console.log('like comment data', response)
+    } catch (error) {
+       console.log('like comment error', error?.message)
+    }
   }
 
   return (
@@ -95,11 +112,14 @@ const CommentBox = ({
                         <span className="font-semibold">Reply</span>
                       </button>
                       <button
-                        className="flex items-center text-red-500 hover:text-red-600 group"
+                        className={`flex items-center ${
+                          user?.isLiked ? "text-blue-500" : "text-gray-500"
+                        } `}
+                        onClick={() => handleLikeComment(user?._id, tokn)}
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          className="h-4 w-4 group-hover:text-red-600 mr-1"
+                          className={`h-4 w-4 mr-1`}
                           viewBox="0 0 20 20"
                           fill="currentColor"
                         >
@@ -109,7 +129,7 @@ const CommentBox = ({
                             clip-rule="evenodd"
                           />
                         </svg>
-                        <span className="font-semibold ">11</span>
+                        <span className="font-semibold ">{user?.likes}</span>
                       </button>
                       <button
                         className="flex items-center"

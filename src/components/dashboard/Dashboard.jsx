@@ -45,7 +45,7 @@ function classNames(...classes) {
 
 export default function Dashboard() {
   const [isOpenCBox, setIsOpenCBox] = useState(false);
-  const [LikedPost, setLikedPost] = useState();
+  const [LikedPost, setLikedPost] = useState(null);
   const [isLikedPost, setIsLikedPost] = useState(LikedPost);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const userProfileDataId = useSelector((state) => state.auth.userInformation);
@@ -66,7 +66,7 @@ export default function Dashboard() {
   useEffect(() => {
    
     getAllPosts();
-  }, [LikedPost, setIsLikedPost, isLikedPost]);
+  }, [LikedPost]);
 
   const getAllPosts = async () => {
     try {
@@ -93,7 +93,9 @@ export default function Dashboard() {
       const response = await userLikeOrUnLikePost(postId, tokn);
       if (response?.statusCode == 200) {
         setLikedPost(response?.data?.isLiked);
-        setIsLikedPost(!isLikedPost);
+        if(LikedPost){
+          setIsLikedPost((prev) => !prev)
+        }
         console.log("post like un like data", response);
       }
     } catch (error) {

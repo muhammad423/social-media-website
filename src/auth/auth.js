@@ -146,10 +146,24 @@ export const getUserCommentsPost = async (postId, tokn) => {
 
 
 
+export const userLikeOrUnLikePostComment = async (postId, tokn) => {
+  try {
+    const response = await axios.post(`http://localhost:8080/api/v1/social-media/like/comment/${postId}`, null,
+      {
+        headers: {
+          Authorization: `Bearer ${tokn}`,
+        },
+      }
+    )
+    return response?.data
+  } catch (error) {
+    console.log('likeOrUnlike data error', error);
+  }
+}
 
 
 
 
-// http://localhost:8080/api/v1/social-media/comments/post/649957f74662581ee44781ee?page=1&limit=200
+
 
 
