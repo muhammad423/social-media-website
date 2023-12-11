@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import AddComments from "./AddComments";
-import { getUserCommentsPost, userLikeOrUnLikePostComment } from "../../auth/auth";
+import {
+  getUserCommentsPost,
+  userLikeOrUnLikePostComment,
+} from "../../auth/auth";
 import axios from "axios";
 
 const CommentBox = ({
@@ -10,14 +13,17 @@ const CommentBox = ({
   getAllPosts,
   getMyPosts,
   getPostsByUserName,
+  curUser,
 }) => {
   const [comments, setComments] = useState(null);
-  const [likeComments, setLikeComments] = useState(null)
-  const [isLikeComments, setIsLikeComments] = useState(likeComments)
+  console.log(comments, "cmmts");
+  const [likeComments, setLikeComments] = useState(null);
+  const [isLikeComments, setIsLikeComments] = useState(likeComments);
 
   useEffect(() => {
     getUserComments();
   }, [posts, likeComments]);
+
   const getUserComments = async () => {
     try {
       const response = await getUserCommentsPost(posts, tokn);
@@ -26,44 +32,45 @@ const CommentBox = ({
       }
       getMyPosts();
       getPostsByUserName();
-      } catch (error) {
+    } catch (error) {
       console.log("get Comment errors", error);
     }
   };
 
-  const handleDeleteComment = async(postId, tokn) => {
-   try {
-    const response = await axios.delete(`http://localhost:8080/api/v1/social-media/comments/${postId}`,
-    {
-      headers: {
-        Authorization: `Bearer ${tokn}`,
-      },
-    }
-    )
-   if(response?.status === 200){
-     getUserComments()
-     getAllPosts()
-  }
-    console.log('delet comment', response?.data)
-   } catch (error) {
-    console.log('delete comment error', error)
-   }
-  }
-
-  const handleLikeComment = async(postId, tokn) => {
+  const handleDeleteComment = async (postId, tokn) => {
     try {
-      const response = await userLikeOrUnLikePostComment(postId, tokn)
-      if(response?.statusCode === 200){
-        setLikeComments(response?.data?.isLiked)
-        if(likeComments){
-          setIsLikeComments((prev) => !prev)
+      const response = await axios.delete(
+        `http://localhost:8080/api/v1/social-media/comments/${postId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${tokn}`,
+          },
+        }
+      );
+      if (response?.status === 200) {
+        getUserComments();
+        getAllPosts();
+      }
+      console.log("delet comment", response?.data);
+    } catch (error) {
+      console.log("delete comment error", error);
+    }
+  };
+
+  const handleLikeComment = async (postId, tokn) => {
+    try {
+      const response = await userLikeOrUnLikePostComment(postId, tokn);
+      if (response?.statusCode === 200) {
+        setLikeComments(response?.data?.isLiked);
+        if (likeComments) {
+          setIsLikeComments((prev) => !prev);
         }
       }
-      console.log('like comment data', response)
+      console.log("like comment data", response);
     } catch (error) {
-       console.log('like comment error', error?.message)
+      console.log("like comment error", error?.message);
     }
-  }
+  };
 
   return (
     <>
@@ -94,9 +101,7 @@ const CommentBox = ({
                     </div>
                     <div className="text-sm text-gray-600">{user?.content}</div>
                     <div className="flex items-center text-sm mt-1 space-x-3">
-                      <button
-                        className="flex items-center text-blue-500 hover:text-blue-600"
-                      >
+                      <button className="flex items-center text-blue-500 hover:text-blue-600">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className="h-4 w-4 mr-1"
@@ -131,58 +136,35 @@ const CommentBox = ({
                         </svg>
                         <span className="font-semibold ">{user?.likes}</span>
                       </button>
-                      <button
-                        className="flex items-center"
-                        onClick={() => handleDeleteComment(user?._id, tokn)}
-                      >
-                        <svg style={{color: '#2563EB'}} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-delete"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z" fill=""></path><line x1="18" y1="9" x2="12" y2="15"></line><line x1="12" y1="9" x2="18" y2="15"></line></svg>
-                       
-                      </button>
+                      {tokn &&
+                        curUser?.data?._id === user?.author?.account?._id && (
+                          <button
+                            className="flex items-center"
+                            onClick={() => handleDeleteComment(user?._id, tokn)}
+                          >
+                            <svg
+                              style={{ color: "#2563EB" }}
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className="feather feather-delete"
+                            >
+                              <path
+                                d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"
+                                fill=""
+                              ></path>
+                              <line x1="18" y1="9" x2="12" y2="15"></line>
+                              <line x1="12" y1="9" x2="18" y2="15"></line>
+                            </svg>
+                          </button>
+                        )}
                     </div>
-                    {/* <div className="flex flex-row mx-auto justify-between mt-4">
-                      <div className="flex mr-2">
-                        <div className="items-center justify-center w-10 h-10 mx-auto">
-                          <img
-                            alt="profil"
-                            src="https://images.unsplash.com/photo-1604238473951-bf1492b379f8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTF8fHdvbWVuJTIwYXNpYXxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60"
-                            className="object-cover w-10 h-10 mx-auto rounded-full"
-                          />
-                        </div>
-                      </div>
-                      <div className="flex-1">
-                        <div className="text-base font-semibold text-gray-600">
-                          Amanda J. Rich{" "}
-                          <span className="text-sm font-normal text-gray-500">
-                            - Feb 11, 2022
-                          </span>
-                        </div>
-                        <div className="text-sm text-gray-600">
-                          Lorem ipsum dolor sit amet.
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex flex-row mx-auto justify-between mt-4">
-                      <div className="flex mr-2">
-                        <div className="items-center justify-center w-10 h-10 mx-auto">
-                          <img
-                            alt="profil"
-                            src="https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8bWFuJTIwYmxhY2t8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60"
-                            className="object-cover w-10 h-10 mx-auto rounded-full"
-                          />
-                        </div>
-                      </div>
-                      <div className="flex-1">
-                        <div className="text-base font-semibold text-gray-600">
-                          Jonathan Paul{" "}
-                          <span className="text-sm font-normal text-gray-500">
-                            - Feb 12, 2022
-                          </span>
-                        </div>
-                        <div className="text-sm text-gray-600">
-                          Lorem, ipsum dolor.
-                        </div>
-                      </div>
-                    </div> */}
                   </div>
                 </div>
               </div>

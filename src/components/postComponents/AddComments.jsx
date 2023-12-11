@@ -1,10 +1,17 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { userCommentsPost } from "../../auth/auth";
+import { useMutation } from "react-query";
+import axios from "axios";
 
-const AddComments = ({ tokn, postsId, getUserComments, getAllPosts, getPostsByUserName}) => {
+const AddComments = ({
+  tokn,
+  postsId,
+  getUserComments,
+  getAllPosts,
+  getPostsByUserName,
+}) => {
   const { handleSubmit, register, reset } = useForm();
-
 
   const onSubmit = async (data) => {
     try {
@@ -19,6 +26,7 @@ const AddComments = ({ tokn, postsId, getUserComments, getAllPosts, getPostsByUs
       console.log("comment error", error);
     }
   };
+
   return (
     <form action="#" className="mt-4 z-20">
       <label for="comment" className="block">

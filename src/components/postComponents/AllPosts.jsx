@@ -16,6 +16,7 @@ const AllPosts = ({
   setIsOpenCBox,
   isOpenCBox,
   getAllPosts,
+  curUser
 }) => {
   const [posts, setPosts] = useState(null);
   const dispatch = useDispatch();
@@ -156,6 +157,7 @@ const AllPosts = ({
           tokn={tokn}
           handleTime={handleTime}
           getAllPosts={getAllPosts}
+          curUser={curUser}
         />
       </div>
     </>

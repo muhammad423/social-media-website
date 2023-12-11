@@ -1,6 +1,6 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { userLogin } from "../auth/auth";
 import { authAccessToken, authRefreshToken, authUserInformation } from "../redux/AuthSlice";
@@ -36,7 +36,7 @@ const SignInPage = () => {
   };
 
   return (
-    <div className="flex justify-center items-center gap-10">
+    <div className="flex justify-center flex-col items-center gap-10">
       <div className="">
 
       </div>
@@ -73,6 +73,11 @@ const SignInPage = () => {
           </button>
         </div>
       </form>
+      <Link to='/signup'>
+      <button className="w-full py-2 px-3 text-blue-500">
+            Sign Up
+          </button>
+      </Link>
     </div>
   );
 };

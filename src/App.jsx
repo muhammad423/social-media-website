@@ -22,6 +22,7 @@ import PagesWrapper from "./components/wrapper/PagesWrapper";
 
 function App() {
   const [curUser, setCurUser] = useState(null);
+  console.log(curUser, 'abc')
   const tokn = useSelector((state) => state.auth.accessToken);
 
   useEffect(() => {
@@ -47,8 +48,16 @@ function App() {
       {/* <Header /> */}
 
       <PagesWrapper>
+
         <Routes>
-          <Route path="/" element={<Home />} />
+        <Route
+            path="/"
+            element={
+              <ProtectedRouters curUser={curUser} tokn={tokn}>
+                <Home  curUser={curUser}/>
+              </ProtectedRouters>
+            }
+          />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/signin" element={<SignIn />} />
           <Route

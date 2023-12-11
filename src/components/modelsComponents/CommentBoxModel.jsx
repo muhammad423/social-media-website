@@ -11,7 +11,8 @@ const CommentBoxModel = ({
   handleTime,
   getAllPosts,
   getMyPosts,
-  getPostsByUserName
+  getPostsByUserName,
+  curUser
 }) => {
   return (
     <Transition.Root show={isOpenCBox} as={Fragment}>
@@ -58,6 +59,7 @@ const CommentBoxModel = ({
                       getAllPosts={getAllPosts}
                       getMyPosts={getMyPosts}
                       getPostsByUserName={getPostsByUserName}
+                      curUser={curUser}
                     />
                   </div>
                 </div>

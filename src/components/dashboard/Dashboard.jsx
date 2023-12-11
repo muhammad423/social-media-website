@@ -43,7 +43,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Dashboard() {
+export default function Dashboard({curUser}) {
   const [isOpenCBox, setIsOpenCBox] = useState(false);
   const [LikedPost, setLikedPost] = useState(null);
   const [isLikedPost, setIsLikedPost] = useState(LikedPost);
@@ -365,6 +365,7 @@ export default function Dashboard() {
                 isOpenCBox={isOpenCBox}
                 setIsOpenCBox={setIsOpenCBox}
                 getAllPosts={getAllPosts}
+                curUser={curUser}
               />
             </div>
           </main>

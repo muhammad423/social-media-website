@@ -26,8 +26,6 @@ export const userLogin = async (user, data) => {
   }
 };
 
-
-
 export const currentUser = async (curUser, authTkn) => {
   try {
     const response = await axios.get(
@@ -61,7 +59,7 @@ export const userLogedOut = async (token) => {
 
 export const userProfile = async (token) => {
   try {
-    console.log("token", token)
+    console.log("token", token);
     const response = await axios.get(
       `http://localhost:8080/api/v1/social-media/profile`,
       {
@@ -76,10 +74,9 @@ export const userProfile = async (token) => {
   }
 };
 
-
 export const userProfileByName = async (query, token) => {
   try {
-    console.log("token", token)
+    console.log("token", token);
     const response = await axios.get(
       `http://localhost:8080/api/v1/social-media/profile/u/${query}`,
       {
@@ -88,82 +85,77 @@ export const userProfileByName = async (query, token) => {
         },
       }
     );
-  if(response?.status == 200) return response?.data;
+    if (response?.status == 200) return response?.data;
   } catch (error) {
     console.log(error, "error");
   }
 };
 
-
 export const userLikeOrUnLikePost = async (postId, tokn) => {
   try {
-    const response = await axios.post(`http://localhost:8080/api/v1/social-media/like/post/${postId}`, null,
+    const response = await axios.post(
+      `http://localhost:8080/api/v1/social-media/like/post/${postId}`,
+      null,
       {
         headers: {
           Authorization: `Bearer ${tokn}`,
         },
       }
-    )
-    return response?.data
+    );
+    return response?.data;
   } catch (error) {
-    console.log('likeOrUnlike data error', error);
+    console.log("likeOrUnlike data error", error);
   }
-}
+};
 
-
-export const userCommentsPost = async (postId,data, tokn) => {
+export const userCommentsPost = async (postId, data, tokn) => {
   try {
-    const response = await axios.post(`http://localhost:8080/api/v1/social-media/comments/post/${postId}`, data,
+    const response = await axios.post(
+      `http://localhost:8080/api/v1/social-media/comments/post/${postId}`,
+      data,
       {
         headers: {
           Authorization: `Bearer ${tokn}`,
         },
       }
-    )
-    return response?.data
+    );
+    return response?.data;
   } catch (error) {
-    console.log('commenys error', error);
+    console.log("commenys error", error);
   }
-}
-
-
+};
 
 export const getUserCommentsPost = async (postId, tokn) => {
   try {
-    const response = await axios.get(`http://localhost:8080/api/v1/social-media/comments/post/${postId}?page=1&limit=200`,
+    const response = await axios.get(
+      `http://localhost:8080/api/v1/social-media/comments/post/${postId}?page=1&limit=200`,
       {
         headers: {
           Authorization: `Bearer ${tokn}`,
         },
       }
-    )
-    return response?.data
+    );
+    return response?.data;
   } catch (error) {
-    console.log('get comments error', error);
+    console.log("get comments error", error);
   }
-}
-
-
-
+};
 
 export const userLikeOrUnLikePostComment = async (postId, tokn) => {
   try {
-    const response = await axios.post(`http://localhost:8080/api/v1/social-media/like/comment/${postId}`, null,
+    const response = await axios.post(
+      `http://localhost:8080/api/v1/social-media/like/comment/${postId}`,
+      null,
       {
         headers: {
           Authorization: `Bearer ${tokn}`,
         },
       }
-    )
-    return response?.data
+    );
+    return response?.data;
   } catch (error) {
-    console.log('likeOrUnlike data error', error);
+    console.log("likeOrUnlike data error", error);
   }
-}
+};
 
-
-
-
-
-
-
+// http://localhost:8080/api/v1/social-media/comments/64973f433acb0ae20a97a354

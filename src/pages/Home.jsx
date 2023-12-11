@@ -2,11 +2,11 @@ import React from 'react'
 import { Dashboard } from '../components'
 
 
-const Home = () => {
+const Home = ({curUser}) => {
   return (
     <>
      <div>
-      <Dashboard />
+      <Dashboard curUser={curUser}/>
      </div>
     </>
   )
