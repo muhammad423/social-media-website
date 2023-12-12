@@ -113,7 +113,7 @@ const AllPosts = ({
                     key={index}
                     src={image?.url}
                     alt={`Post Image ${index + 1}`}
-                    className="w-full h-[300px] rounded-md object-cover overflow-hidden"
+                className={`w-full  ${ postData?.images?.length > 1 ? 'h-[400px]': 'h-[500px]' } rounded-md object-cover overflow-hidden`}
                   />
                 ))}
               </div>

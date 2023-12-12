@@ -1,25 +1,33 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { userLikeOrUnLikePost, userProfile } from "../../auth/auth";
-import { getUserProfileData } from "../../redux/AuthSlice";
+import {
+  userFollowOrUnFollow,
+  userLikeOrUnLikePost,
+  userProfile,
+  userProfileByName,
+} from "../../auth/auth";
+import {
+  getUserProfileData,
+  getSearchUserProfileData,
+} from "../../redux/AuthSlice";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { UserPostsPage, UserProfileData } from "../../components";
 import axios from "axios";
 import FullProfileImageModel from "../../components/ProfileComponents/FullProfileImageModel";
 
-
-const UserProfile = () => {
+const UserProfile = ({curUser}) => {
   const [LikedPost, setLikedPost] = useState();
   const [isLikedPost, setIsLikedPost] = useState(LikedPost);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [userProfileData, setUserProfileData] = useState(null);
-  console.log(userProfileData, 'userpofggh')
   const [loadingUserProfile, setLoadingUserProfile] = useState(true);
   const [isFollowing, setIsFollowing] = useState(false);
   const [myPosts, setMyposts] = useState(null);
   const [open, setOpen] = useState(false);
   const [isUpdatePostModal, setIsUpdatePostModal] = useState(false);
+  const [followData, setFollowData] = useState(null);
+  const [isFollowed, setIsFollowed] = useState(followData);
 
   const tokn = useSelector((state) => state.auth.accessToken);
 
@@ -46,7 +54,6 @@ const UserProfile = () => {
     getMyPosts();
   }, [LikedPost]);
 
-
   const getMyPosts = async () => {
     try {
       const response = await axios.get(
@@ -61,12 +68,10 @@ const UserProfile = () => {
       if (response.status === 200) {
         setMyposts(response?.data?.data);
       }
-
     } catch (error) {
       console.log("username erroe", error);
     }
   };
-
 
   const handleLike = async (postId, tokn) => {
     try {
@@ -97,37 +102,67 @@ const UserProfile = () => {
 
   const handleTime = (time) => {
     const originalDateString = time;
-  const originalDate = new Date(originalDateString);
-  
-  const formattedDate = `${
-    (originalDate.getMonth() + 1).toString().padStart(2, '0')
-  }/${
-    originalDate.getDate().toString().padStart(2, '0')
-  }/${
-    originalDate.getFullYear()
-  } ${
-    originalDate.getHours().toString().padStart(2, '0')
-  }:${
-    originalDate.getMinutes().toString().padStart(2, '0')
-  }:${
-    originalDate.getSeconds().toString().padStart(2, '0')
-  }`;
-  return formattedDate
-  }
+    const originalDate = new Date(originalDateString);
+
+    const formattedDate = `${(originalDate.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}/${originalDate
+      .getDate()
+      .toString()
+      .padStart(2, "0")}/${originalDate.getFullYear()} ${originalDate
+      .getHours()
+      .toString()
+      .padStart(2, "0")}:${originalDate
+      .getMinutes()
+      .toString()
+      .padStart(2, "0")}:${originalDate
+      .getSeconds()
+      .toString()
+      .padStart(2, "0")}`;
+    return formattedDate;
+  };
+
+  const handleUserProfile = async (tokn) => {
+    try {
+      const response = await userProfileByName(
+        serachProfileData?.data?.account?.username,
+        tokn
+      );
+      if (response?.statusCode === 200) {
+        dispatch(getSearchUserProfileData(response));
+      }
+    } catch (error) {
+      console.log("search profile error", error);
+    }
+  };
+
+  const handleFollowOrUnFollow = async (userId, tokn) => {
+    try {
+      const response = await userFollowOrUnFollow(userId, tokn);
+      if (response?.statusCode === 200) {
+        setFollowData(response?.data?.following);
+        setIsFollowed((prev) => !prev);
+        handleUserProfile(tokn);
+      }
+      console.log(response, "follow or un follow data");
+    } catch (error) {
+      console.log("follow or unfollow error", error);
+    }
+  };
 
   return (
     <>
-      {serachProfileData && serachProfileData?.data?.owner ? (
+      {serachProfileData && serachProfileData?.data?.owner != curUser?.data?._id ? (
         <div>
           <UserProfileData
             serachProfileData={serachProfileData}
-            isFollowing={isFollowing}
+            isFollowed={isFollowed}
             tokn={tokn}
             handleTime={handleTime}
             handleLike={handleLike}
             LikedPost={LikedPost}
-           
-            />
+            handleFollowOrUnFollow={handleFollowOrUnFollow}
+          />
         </div>
       ) : (
         <div className="w-full mx-auto md:px-10">
@@ -161,7 +196,7 @@ const UserProfile = () => {
                 </span>
               </div>
               <div className="text-center mx-4">
-                <p className="text-black">
+                <p className="text-white">
                   {userProfileData?.data?.followersCount}
                 </p>
                 <span className="font-fontNunito text-white capitalize">
@@ -169,11 +204,11 @@ const UserProfile = () => {
                 </span>
               </div>
               <div className="text-center mx-4">
-                <p className="text-black">
-                  {userProfileData?.data?.followersCount}
+                <p className="text-white">
+                  {userProfileData?.data?.followingCount}
                 </p>
                 <span className="font-fontNunito text-white capitalize">
-                  Folowing
+                  Following
                 </span>
               </div>
             </div>
@@ -250,7 +285,6 @@ const UserProfile = () => {
                 handleTime={handleTime}
                 handleLike={handleLike}
                 getMyPosts={getMyPosts}
-                
               />
             </div>
           </div>
@@ -340,8 +374,7 @@ const UserProfile = () => {
         </div>
       )}
 
-<FullProfileImageModel open={open} setOpen={setOpen} />
-
+      <FullProfileImageModel open={open} setOpen={setOpen} />
     </>
   );
 };

@@ -88,7 +88,7 @@ function App() {
             path="/userProfile/:_id"
             element={
               <ProtectedRouters curUser={curUser} tokn={tokn}>
-                <UserProfile />
+                <UserProfile curUser={curUser}/>
               </ProtectedRouters>
             }
           />

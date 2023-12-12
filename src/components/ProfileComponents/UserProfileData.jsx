@@ -4,8 +4,9 @@ import axios from 'axios'
 
 
 
-const UserProfileData = ({serachProfileData, isFollowing, tokn, handleTime, handleLike, LikedPost}) => {
+const UserProfileData = ({serachProfileData,tokn, handleTime, handleLike, LikedPost, handleFollowOrUnFollow,isFollowed}) => {
   const [oneUserPosts, setOneUserPosts] = useState()
+  console.log(serachProfileData, 'search data')
 
     useEffect(() => {
       getPostsByUserName();
@@ -56,13 +57,13 @@ const UserProfileData = ({serachProfileData, isFollowing, tokn, handleTime, hand
 
           <div className="flex justify-center items-center gap-2 my-3">
             <div className="text-center mx-4">
-              <p className="text-black">0</p>
+              <p className="text-white">{oneUserPosts?.data?.posts?.length}</p>
               <span className="font-fontNunito text-white capitalize">
                 Posts
               </span>
             </div>
             <div className="text-center mx-4">
-              <p className="text-black">
+              <p className="text-white">
                 {serachProfileData?.data?.followersCount}
               </p>
               <span className="font-fontNunito text-white capitalize">
@@ -70,18 +71,18 @@ const UserProfileData = ({serachProfileData, isFollowing, tokn, handleTime, hand
               </span>
             </div>
             <div className="text-center mx-4">
-              <p className="text-black">
-                {serachProfileData?.data?.followersCount}
+              <p className="text-white">
+                {serachProfileData?.data?.followingCount}
               </p>
               <span className="font-fontNunito text-white capitalize">
-                Folowing
+                Following
               </span>
             </div>
           </div>
 
           <div className="flex justify-center gap-2 my-5">
-            <button className="bg-pink-500 px-10 py-2 rounded-full text-white shadow-lg">
-                  {isFollowing ? "Following" : "Follow"}
+            <button className="bg-pink-500 px-10 py-2 rounded-full text-white shadow-lg" onClick={() =>handleFollowOrUnFollow(serachProfileData?.data?.account?._id, tokn)}>
+                  {serachProfileData?.data?.isFollowing ? "Following" : "Follow"}
                 </button>
                 <button className="bg-white border border-gray-500 px-10 py-2 rounded-full shadow-lg">
                   Message

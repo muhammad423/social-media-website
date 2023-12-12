@@ -158,4 +158,40 @@ export const userLikeOrUnLikePostComment = async (postId, tokn) => {
   }
 };
 
-// http://localhost:8080/api/v1/social-media/comments/64973f433acb0ae20a97a354
+
+
+export const userFollowOrUnFollow = async (postId, tokn) => {
+  try {
+    const response = await axios.post(
+      `http://localhost:8080/api/v1/social-media/follow/${postId}`,
+      null,
+      {
+        headers: {
+          Authorization: `Bearer ${tokn}`,
+        },
+      }
+    );
+    return response?.data;
+  } catch (error) {
+    console.log("folow or unfillow data error", error);
+  }
+};
+
+
+
+
+export const getUserFollowingList = async (userName, tokn) => {
+  try {
+    const response = await axios.get(
+      `http://localhost:8080/api/v1/social-media/follow/list/following/${userName}?page=1&limit=20`,
+      {
+        headers: {
+          Authorization: `Bearer ${tokn}`,
+        },
+      }
+    );
+    return response?.data;
+  } catch (error) {
+    console.log("following list error", error);
+  }
+};
